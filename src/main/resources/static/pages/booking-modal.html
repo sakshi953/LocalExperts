@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LocalExperts+ — Book / Order</title>
+<style>
+  :root {
+    --primary: #6c63ff;
+    --success: #00b894;
+    --danger:  #d63031;
+    --bg:      #f4f6fb;
+    --card:    #ffffff;
+    --text:    #2d3436;
+    --muted:   #636e72;
+    --border:  #dfe6e9;
+    --radius:  14px;
+    --shadow:  0 8px 32px rgba(108,99,255,.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); }
+
+  /* ── Overlay ─────────────────────────────────────── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; padding: 16px;
+  }
+  .modal {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%; max-width: 520px;
+    max-height: 90vh; overflow-y: auto;
+    animation: pop .22s ease;
+  }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ── Header ──────────────────────────────────────── */
+  .modal-header {
+    padding: 22px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .modal-header .icon { font-size: 2rem; }
+  .modal-header h2  { font-size: 1.2rem; font-weight: 700; }
+  .modal-header p   { font-size: .85rem; color: var(--muted); }
+  .close-btn {
+    margin-left: auto; background: none; border: none;
+    font-size: 1.4rem; cursor: pointer; color: var(--muted);
+    line-height: 1; padding: 4px 8px; border-radius: 8px;
+    transition: background .15s;
+  }
+  .close-btn:hover { background: var(--bg); }
+
+  /* ── Body ────────────────────────────────────────── */
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Section titles */
+  .section-label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--primary); margin-bottom: -6px;
+  }
+
+  /* Inputs */
+  label { font-size: .85rem; font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; }
+  label span { color: #e17055; }
+  input, select, textarea {
+    width: 100%; padding: 10px 13px; border: 1.5px solid var(--border);
+    border-radius: 9px; font-size: .9rem; color: var(--text);
+    background: #fafbfc; transition: border .15s, box-shadow .15s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(108,99,255,.12);
+  }
+  textarea { resize: vertical; min-height: 72px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Radio tabs (order type) */
+  .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radio-group label {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border: 1.5px solid var(--border);
+    border-radius: 30px; cursor: pointer; font-weight: 500;
+    font-size: .84rem; transition: all .15s;
+  }
+  .radio-group input[type=radio] { display: none; }
+  .radio-group input[type=radio]:checked + span {
+    /* handled via JS class */
+  }
+  .radio-group label.active {
+    border-color: var(--primary); background: #6c63ff18; color: var(--primary);
+  }
+
+  /* Footer */
+  .modal-footer {
+    padding: 16px 24px 22px;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 10px; justify-content: flex-end;
+  }
+  .btn {
+    padding: 11px 26px; border-radius: 9px; font-size: .92rem;
+    font-weight: 600; border: none; cursor: pointer; transition: all .18s;
+  }
+  .btn-ghost { background: var(--bg); color: var(--muted); }
+  .btn-ghost:hover { background: var(--border); }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: #5a52e0; transform: translateY(-1px); }
+  .btn-primary:disabled { background: #b2b0d8; cursor: not-allowed; transform: none; }
+
+  /* Success state */
+  .success-box {
+    text-align: center; padding: 32px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .success-box .check { font-size: 3.5rem; animation: bounce .4s ease; }
+  @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+  .success-box h3  { font-size: 1.15rem; color: var(--success); }
+  .success-box p   { color: var(--muted); font-size: .88rem; line-height: 1.5; }
+
+  /* Error */
+  .error-msg { color: var(--danger); font-size: .82rem; margin-top: 4px; }
+
+  /* ── Service Selector ─────────────────────────── */
+  .service-selector-wrap {
+    border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden;
+  }
+  .service-selector-wrap table { width: 100%; border-collapse: collapse; }
+  .service-selector-wrap thead tr { background: #f0eeff; }
+  .service-selector-wrap th {
+    padding: 9px 12px; font-size: .75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: var(--primary);
+    text-align: left;
+  }
+  .service-selector-wrap td { padding: 7px 10px; border-top: 1px solid var(--border); }
+  .service-selector-wrap select,
+  .service-selector-wrap input[type=number] {
+    padding: 8px 10px; font-size: .87rem;
+  }
+  .svc-add-btn {
+    width: 100%; background: none; border: 1px dashed var(--border);
+    border-radius: 0 0 10px 10px; padding: 8px; cursor: pointer;
+    font-size: .82rem; color: var(--muted); transition: background .15s;
+  }
+  .svc-add-btn:hover { background: #f0eeff; color: var(--primary); }
+  .svc-remove-btn {
+    background: rgba(214,48,49,.08); border: none; color: var(--danger);
+    border-radius: 6px; width: 26px; height: 26px; cursor: pointer; font-size: 13px;
+  }
+
+  /* ── Bill Summary ─────────────────────────────── */
+  .bill-summary {
+    background: linear-gradient(135deg,#f0eeff,#e8f5e9);
+    border: 1.5px solid #c5b8ff; border-radius: 12px;
+    padding: 14px 16px; display: none; flex-direction: column; gap: 6px;
+  }
+  .bill-summary.visible { display: flex; }
+  .bill-row { display: flex; justify-content: space-between; font-size: .85rem; color: var(--text); }
+  .bill-row.total {
+    border-top: 1.5px solid #c5b8ff; padding-top: 8px; margin-top: 4px;
+    font-weight: 700; font-size: .96rem; color: var(--primary);
+  }
+  .bill-title { font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing:.06em; color: var(--primary); margin-bottom: 4px; }
+
+  /* ── Demo page ───────────────────────────────────── */
+  .demo-page {
+    padding: 40px 20px; max-width: 900px; margin: auto;
+  }
+  .demo-page h1 { font-size: 1.5rem; margin-bottom: 8px; }
+  .demo-page p  { color: var(--muted); margin-bottom: 28px; }
+  .biz-cards {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .biz-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 20px; text-align: center; cursor: pointer;
+    border: 2px solid var(--border); transition: all .2s;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .biz-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .biz-card .big-icon { font-size: 2.4rem; margin-bottom: 8px; }
+  .biz-card h3 { font-size: .95rem; }
+  .biz-card p  { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ── Demo trigger page ──────────────────────────── -->
+<div class="demo-page">
+  <h1>🏪 LocalExperts+ — Booking Demo</h1>
+  <p>Click any business type to open the booking modal with smart dynamic fields.</p>
+  <div class="biz-cards" id="bizCards"></div>
+</div>
+
+<!-- ── Modal (hidden by default) ─────────────────── -->
+<div class="overlay" id="overlay" style="display:none;" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <!-- filled dynamically -->
+  </div>
+</div>
+
+<script>
+// ── Business type config ───────────────────────────
+const BIZ_TYPES = [
+  {
+    category: "Hotels",
+    icon: "🏨",
+    label: "Hotel / Room",
+    color: "#6c63ff",
+    desc: "Book rooms, suites & more",
+    fields: () => `
+      <div class="row-2">
+        <div>
+          <label>Check-in Date <span>*</span></label>
+          <input type="date" id="checkIn" required min="${today()}"/>
+        </div>
+        <div>
+          <label>Check-out Date <span>*</span></label>
+          <input type="date" id="checkOut" required min="${today()}"/>
+        </div>
+      </div>
+      <div>
+        <label>Room Type <span>*</span></label>
+        <select id="roomType" required>
+          <option value="">Select room type</option>
+          <option>Standard Room</option>
+          <option>Deluxe Room</option>
+          <option>Suite</option>
+          <option>Family Room</option>
+          <option>AC Room</option>
+          <option>Non-AC Room</option>
+        </select>
+      </div>
+      <div class="row-2">
+        <div>
+          <label>No. of Guests <span>*</span></label>
+          <input type="number" id="guests" min="1" max="20" value="1" required/>
+        </div>
+        <div>
+          <label>No. of Rooms <span>*</span></label>
+          <input type="number" id="rooms" min="1" max="10" value="1" required/>
+        </div>
+      </div>
+    `
+  },
+  {
+    category: "Food",
+    icon: "🍽️",
+    label: "Food / Restaurant",
+    color: "#e17055",
+    desc: "Order food or book a table",
+    fields: () => `
+      <div>
+        <label>Order Type <span>*</span></label>
+        <div class="radio-group" id="orderTypeGroup">
+          <label class="active" onclick="selectRadio('orderType','dine-in',this)">
+            <input type="radio" name="orderType" value="dine-in" checked/><span>🍴 Dine-in</span>
+          </label>
+          <label onclick="selectRadio('orderType','takeaway',this)">
+            <input type="radio" name="orderType" value="takeaway"/><span>📦 Takeaway</span>
+          </label>
+          <label onclick="selectRadio('orderType','delivery',this)">
+            <input type="radio" name="orderType" value="delivery"/><span>🛵 Delivery</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <label>Items / Dishes <span>*</span></label>
+        <textarea id="items" placeholder="e.g. Dal Tadka x2, Roti x4, Paneer Butter Masala x1" required></textarea>
+      </div>
+      <div id="tableNoWrap">
+        <label>Table No. (optional)</label>
+        <input type="text" id="tableNo" placeholder="e.g. Table 5"/>
+      </div>
+      <div id="deliveryAddrWrap" style="display:none;">
+        <label>Delivery Address <span>*</span></label>
+        <textarea id="deliveryAddress" placeholder="Full delivery address with landmark"></textarea>
+      </div>
+      <div>
+        <label>Preferred Time</label>
+        <input type="time" id="preferredTime"/>
+      </div>
+    `
+  },
+  {
+    category: "Healthcare",
+    icon: "🏥",
+    label: "Healthcare",
+    color: "#00b894",
+    desc: "Book doctor appointments",
+    fields: () => `
+      <div class="row-2">
+        <div>
+          <label>Appointment Date <span>*</span></label>
+          <input type="date" id="appointmentDate" required min="${today()}"/>
+        </div>
+        <div>
+          <label>Preferred Time <span>*</span></label>
+          <input type="time" id="appointmentTime" required/>
+        </div>
+      </div>
+      <div>
+        <label>Doctor / Specialist (if preferred)</label>
+        <input type="text" id="doctorName" placeholder="Dr. Name or leave blank"/>
+      </div>
+      <div class="row-2">
+        <div>
+          <label>Patient Age <span>*</span></label>
+          <input type="number" id="patientAge" min="0" max="120" placeholder="Age" required/>
+        </div>
+        <div>
+          <label>Consultation Type</label>
+          <select id="consultationType">
+            <option>General Consultation</option>
+            <option>Follow-up</option>
+            <option>Emergency</option>
+            <option>Online Consultation</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Reason / Symptoms <span>*</span></label>
+        <textarea id="reason" placeholder="Brief description of health issue or reason for visit" required></textarea>
+      </div>
+    `
+  },
+  {
+    category: "Services",
+    icon: "🔧",
+    label: "Services",
+    color: "#0984e3",
+    desc: "Book plumber, electrician & more",
+    fields: () => `
+      <div class="row-2">
+        <div>
+          <label>Scheduled Date <span>*</span></label>
+          <input type="date" id="scheduledDate" required min="${today()}"/>
+        </div>
+        <div>
+          <label>Preferred Time <span>*</span></label>
+          <input type="time" id="scheduledTime" required/>
+        </div>
+      </div>
+      <div>
+        <label>Service Location / Address <span>*</span></label>
+        <textarea id="serviceLocation" placeholder="Full address where service is needed" required></textarea>
+      </div>
+    `
+  },
+  {
+    category: "Grocery",
+    icon: "🛒",
+    label: "Grocery",
+    color: "#fdcb6e",
+    desc: "Order groceries for home delivery",
+    fields: () => `
+      <div>
+        <label>Items Required <span>*</span></label>
+        <textarea id="items" placeholder="e.g. Rice 5kg, Wheat 2kg, Onion 1kg, Tomato 500g" required></textarea>
+      </div>
+      <div>
+        <label>Delivery Address <span>*</span></label>
+        <textarea id="deliveryAddress" placeholder="Full delivery address with landmark" required></textarea>
+      </div>
+      <div>
+        <label>Preferred Delivery Slot <span>*</span></label>
+        <select id="deliverySlot" required>
+          <option value="">Select slot</option>
+          <option>Morning (7am – 11am)</option>
+          <option>Afternoon (11am – 3pm)</option>
+          <option>Evening (3pm – 7pm)</option>
+          <option>Night (7pm – 10pm)</option>
+        </select>
+      </div>
+    `
+  },
+  {
+    category: "Education",
+    icon: "📚",
+    label: "Education",
+    color: "#a29bfe",
+    desc: "Enquire about courses & admissions",
+    fields: () => `
+      <div>
+        <label>Course / Program Name <span>*</span></label>
+        <input type="text" id="courseName" placeholder="e.g. UPSC Coaching, 10th Tuitions, Spoken English" required/>
+      </div>
+      <div>
+        <label>Preferred Batch / Timing <span>*</span></label>
+        <select id="preferredBatch" required>
+          <option value="">Select batch</option>
+          <option>Morning Batch (6am – 9am)</option>
+          <option>Morning Batch (9am – 12pm)</option>
+          <option>Afternoon Batch (12pm – 3pm)</option>
+          <option>Evening Batch (4pm – 7pm)</option>
+          <option>Weekend Batch</option>
+          <option>Online / Flexible</option>
+        </select>
+      </div>
+      <div class="row-2">
+        <div>
+          <label>Student Age <span>*</span></label>
+          <input type="number" id="studentAge" min="3" max="80" placeholder="Age" required/>
+        </div>
+        <div>
+          <label>Parent / Guardian Name</label>
+          <input type="text" id="parentName" placeholder="(if student is minor)"/>
+        </div>
+      </div>
+    `
+  }
+];
+
+// ── Global: current business products ─────────────
+let _currentBizProducts = []; // [{name, price}]
+
+// ── Helpers ────────────────────────────────────────
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function selectRadio(name, value, labelEl) {
+  // Update active class
+  const grp = labelEl.closest('.radio-group');
+  grp.querySelectorAll('label').forEach(l => l.classList.remove('active'));
+  labelEl.classList.add('active');
+  // Show/hide delivery address for Food
+  if (name === 'orderType') {
+    const daWrap = document.getElementById('deliveryAddrWrap');
+    const tWrap  = document.getElementById('tableNoWrap');
+    if (daWrap) daWrap.style.display = value === 'delivery' ? 'block' : 'none';
+    if (tWrap)  tWrap.style.display  = value === 'dine-in'  ? 'block' : 'none';
+  }
+}
+
+// ── Render demo cards ──────────────────────────────
+const container = document.getElementById('bizCards');
+BIZ_TYPES.forEach((biz, i) => {
+  const card = document.createElement('div');
+  card.className = 'biz-card';
+  card.innerHTML = `
+    <div class="big-icon">${biz.icon}</div>
+    <h3>${biz.label}</h3>
+    <p>${biz.desc}</p>
+  `;
+  card.onclick = () => openModal({
+    id: 'demo-biz-' + i,
+    name: biz.label + ' Demo Business',
+    category: biz.category,
+    contact: { email: 'owner@example.com' }
+  });
+  container.appendChild(card);
+});
+
+// ── Open Modal ─────────────────────────────────────
+function openModal(business) {
+  const biz = BIZ_TYPES.find(b => b.category === business.category) || BIZ_TYPES[0];
+  const overlay = document.getElementById('overlay');
+  const modal   = document.getElementById('modal');
+  // Parse products list: ["TV Repair:500","AC Service:1200"] → [{name,price}]
+  _currentBizProducts = (business.products || []).map(p => {
+    const ci = p.indexOf(':');
+    const name  = ci !== -1 ? p.slice(0, ci).trim() : p.trim();
+    const price = ci !== -1 ? p.slice(ci + 1).trim() : '';
+    return { name, price: price ? parseFloat(price) : 0 };
+  }).filter(i => i.name);
+
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="icon">${biz.icon}</div>
+      <div>
+        <h2>${business.name}</h2>
+        <p>${biz.label} · Place your order / booking</p>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-label">Your Details</div>
+      <div>
+        <label>Full Name <span>*</span></label>
+        <input type="text" id="customerName" placeholder="Your full name" required/>
+      </div>
+      <div class="row-2">
+        <div>
+          <label>Email <span>*</span></label>
+          <input type="email" id="customerEmail" placeholder="you@email.com" required/>
+        </div>
+        <div>
+          <label>Phone <span>*</span></label>
+          <input type="tel" id="customerPhone" placeholder="10-digit mobile" required/>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:4px;">
+        ${biz.label} Details
+      </div>
+      ${buildProductsTable()}
+      ${biz.fields()}
+
+      <div>
+        <label>Special Notes / Instructions</label>
+        <textarea id="notes" placeholder="Any special requests or instructions..."></textarea>
+      </div>
+
+      <div id="formError" class="error-msg" style="display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitOrder('${business.id}','${business.category}','${business.contact?.email || ''}')">
+        ${biz.icon} Confirm Booking
+      </button>
+    </div>
+  `;
+
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // Init products table for ALL categories if products exist
+  if (_currentBizProducts.length) {
+    initProductsTable();
+  }
+}
+
+// ── Close Modal ────────────────────────────────────
+function closeModal() {
+  document.getElementById('overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+// ── Submit Order ───────────────────────────────────
+async function submitOrder(businessId, category, ownerEmail) {
+  const btn = document.getElementById('submitBtn');
+  const errDiv = document.getElementById('formError');
+  errDiv.style.display = 'none';
+
+  // Collect base fields
+  const customerName  = document.getElementById('customerName')?.value.trim();
+  const customerEmail = document.getElementById('customerEmail')?.value.trim();
+  const customerPhone = document.getElementById('customerPhone')?.value.trim();
+  const notes         = document.getElementById('notes')?.value.trim();
+
+  if (!customerName || !customerEmail || !customerPhone) {
+    errDiv.textContent = '⚠️ Please fill in all required fields.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  // Collect category-specific fields
+  const extra = {};
+  const fieldIds = {
+    Hotels:     ['checkIn','checkOut','roomType','guests','rooms'],
+    Food:       ['items','tableNo','deliveryAddress','preferredTime'],
+    Healthcare: ['appointmentDate','appointmentTime','doctorName','patientAge','reason','consultationType'],
+    Services:   ['scheduledDate','scheduledTime','serviceLocation'],
+    Grocery:    ['items','deliveryAddress','deliverySlot'],
+    Education:  ['courseName','preferredBatch','studentAge','parentName'],
+  };
+
+  (fieldIds[category] || []).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) extra[id] = el.value.trim();
+  });
+
+  // ALL categories: collect selected products/services from unified table
+  const prodSummary = document.getElementById('prodBillSummary');
+  if (prodSummary) {
+    const selectedNames = prodSummary.dataset.names || '';
+    const selectedTotal = parseFloat(prodSummary.dataset.total || '0');
+    // Validate — must select at least one if table exists
+    if (!selectedNames) {
+      errDiv.textContent = '⚠️ Please select at least one product or service.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    extra.selectedItems = selectedNames;
+    payload.totalAmount = selectedTotal || null;
+    // For Services: also set serviceType
+    if (category === 'Services') extra.serviceType = selectedNames;
+  }
+
+  // Food: get radio orderType
+  if (category === 'Food') {
+    const radios = document.querySelectorAll('input[name="orderType"]');
+    radios.forEach(r => { if (r.checked) extra.orderType = r.value; });
+  }
+
+  const payload = {
+    businessId,
+    customerPhone,
+    notes,
+    ...extra
+  };
+  // totalAmount already set for Services above; leave null for others
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Placing Order...';
+
+  try {
+    const token = localStorage.getItem('token'); // JWT from login
+
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // Show success state
+      document.getElementById('modal').innerHTML = `
+        <div class="success-box">
+          <div class="check">✅</div>
+          <h3>Booking Confirmed!</h3>
+          <p>Your order has been placed successfully.<br/>
+             A confirmation email has been sent to <b>${customerEmail}</b>.<br/>
+             The business owner has also been notified.
+             ${payload.totalAmount ? '<br/><strong style="color:var(--primary)">Total: ₹' + payload.totalAmount.toFixed(0) + '</strong>' : ''}
+          </p>
+          <button class="btn btn-primary" onclick="closeModal()" style="margin-top:8px;">
+            Close
+          </button>
+        </div>
+      `;
+    } else {
+      errDiv.textContent = '❌ ' + (data.message || 'Something went wrong. Please try again.');
+      errDiv.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '🔄 Retry';
+    }
+
+  } catch (err) {
+    // Demo mode — simulate success
+    document.getElementById('modal').innerHTML = `
+      <div class="success-box">
+        <div class="check">✅</div>
+        <h3>Booking Confirmed! (Demo)</h3>
+        <p>In production, your order would be saved and emails sent to both<br/>
+           the <b>customer</b> and the <b>business owner</b> automatically.</p>
+        <button class="btn btn-primary" onclick="closeModal()" style="margin-top:8px;">
+          Close
+        </button>
+      </div>
+    `;
+  }
+}
+// ── Products / Services Table — ALL Categories ────
+function buildProductsTable() {
+  if (!_currentBizProducts.length) return '';
+  const options = _currentBizProducts.map(p =>
+    `<option value="${p.name}" data-price="${p.price}">${p.name}${p.price > 0 ? ' — ₹' + p.price : ''}</option>`
+  ).join('');
+  window._modalOptions = options;
+  return `
+    <div>
+      <label>🛍️ Select Products / Services <span>*</span></label>
+      <div class="service-selector-wrap">
+        <table>
+          <thead><tr>
+            <th>Item</th>
+            <th style="width:110px">Price (₹)</th>
+            <th style="width:75px">Qty</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="prodTableBody"></tbody>
+        </table>
+        <button type="button" class="svc-add-btn" onclick="addProdRow()">+ Add Item</button>
+      </div>
+      <div class="bill-summary" id="prodBillSummary">
+        <div class="bill-title">🧾 Bill Summary</div>
+        <div id="prodBillLines"></div>
+        <div class="bill-row total">
+          <span>Total Amount</span>
+          <span id="prodBillTotal">₹0</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function initProductsTable() {
+  const tbody = document.getElementById('prodTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  addProdRow();
+}
+
+function addProdRow() {
+  const tbody = document.getElementById('prodTableBody');
+  if (!tbody) return;
+  const opts = window._modalOptions || '';
+  const tr = document.createElement('tr');
+  tr.className = 'svc-row';
+  tr.innerHTML = `
+    <td style="padding:7px 10px">
+      <select class="svc-select" onchange="onProdChange(this)" style="margin:0">
+        <option value="">— Select item —</option>
+        ${opts}
+      </select>
+    </td>
+    <td style="padding:7px 10px">
+      <input class="svc-price" type="text" readonly style="margin:0;background:#f0eeff;color:var(--primary);font-weight:700" placeholder="—"/>
+    </td>
+    <td style="padding:7px 10px">
+      <input class="svc-qty" type="number" min="1" value="1" style="margin:0" onchange="recalcProdBill()"/>
+    </td>
+    <td style="text-align:center;padding:7px 6px">
+      <button type="button" class="svc-remove-btn" onclick="removeProdRow(this)">✕</button>
+    </td>`;
+  tbody.appendChild(tr);
+}
+
+function removeProdRow(btn) {
+  btn.closest('tr').remove();
+  recalcProdBill();
+}
+
+function onProdChange(sel) {
+  const opt   = sel.options[sel.selectedIndex];
+  const price = opt?.dataset?.price ? parseFloat(opt.dataset.price) : 0;
+  const priceEl = sel.closest('tr').querySelector('.svc-price');
+  priceEl.value = price ? '₹' + price : '—';
+  sel.dataset.price = price;
+  recalcProdBill();
+}
+
+function recalcProdBill() {
+  const rows    = document.querySelectorAll('#prodTableBody .svc-row');
+  const summary = document.getElementById('prodBillSummary');
+  const lines   = document.getElementById('prodBillLines');
+  const totalEl = document.getElementById('prodBillTotal');
+  if (!summary) return;
+
+  let total = 0;
+  const lineArr = [];
+  const nameArr = [];
+
+  rows.forEach(row => {
+    const sel   = row.querySelector('.svc-select');
+    const qty   = parseInt(row.querySelector('.svc-qty')?.value || '1');
+    if (!sel || !sel.value) return;
+    const price = parseFloat(sel.dataset.price || '0');
+    const sub   = price * qty;
+    total += sub;
+    lineArr.push(`${sel.value} × ${qty} <span style="float:right;font-weight:600">₹${sub.toFixed(0)}</span>`);
+    nameArr.push(qty > 1 ? `${sel.value} x${qty}` : sel.value);
+  });
+
+  if (!lineArr.length) {
+    summary.classList.remove('visible');
+    summary.dataset.total = '0';
+    summary.dataset.names = '';
+    return;
+  }
+  summary.classList.add('visible');
+  summary.dataset.total = total;
+  summary.dataset.names = nameArr.join(', ');
+  lines.innerHTML  = lineArr.join('<br>');
+  totalEl.textContent = '₹' + total.toFixed(0);
+}
+
+
+</script>
+</body>
+</html>

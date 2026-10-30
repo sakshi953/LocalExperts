@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Account — LocalExperts+</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;
+  --accent:#6c63ff;--accent2:#ff6584;--accent3:#43e97b;
+  --text:#f0f0f8;--text-muted:#8888aa;--text-dim:#555570;
+  --card-bg:#161622;--glow:rgba(108,99,255,0.25);--radius:16px;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:999;backdrop-filter:blur(24px);background:rgba(10,10,15,0.92);border-bottom:1px solid var(--border);padding:0 24px;height:62px;display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-logo span{color:var(--accent)}
+.nav-badge{background:rgba(108,99,255,0.15);color:var(--accent);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;border:1px solid rgba(108,99,255,0.3)}
+.nav-right{display:flex;gap:8px;align-items:center;margin-left:auto}
+.btn-nav{background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:10px;font-family:var(--font-body);font-weight:500;cursor:pointer;font-size:13px;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center}
+.btn-nav:hover{opacity:.85}
+.btn-nav-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:7px 16px;border-radius:10px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
+.btn-nav-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* MAIN LAYOUT */
+.page-wrap{padding-top:62px;min-height:100vh;display:flex;align-items:stretch}
+.register-layout{display:grid;grid-template-columns:1fr 1.2fr;width:100%;min-height:calc(100vh - 62px)}
+
+/* LEFT PANEL */
+.left-panel{background:linear-gradient(145deg,rgba(108,99,255,0.12) 0%,rgba(255,101,132,0.08) 100%);border-right:1px solid var(--border);padding:56px 48px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.left-panel::after{content:'';position:absolute;bottom:-100px;left:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(108,99,255,0.15),transparent 70%);pointer-events:none}
+.panel-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.3);border-radius:100px;padding:6px 16px;font-size:12px;color:var(--accent);margin-bottom:28px;animation:fadeUp .4s ease both;width:fit-content}
+.panel-heading{font-family:var(--font-head);font-size:clamp(26px,2.8vw,42px);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:16px;animation:fadeUp .4s .05s ease both}
+.panel-heading em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.panel-sub{color:var(--text-muted);font-size:14px;line-height:1.7;margin-bottom:40px;animation:fadeUp .4s .1s ease both;max-width:380px}
+.steps{display:flex;flex-direction:column;gap:0;animation:fadeUp .4s .15s ease both}
+.step{display:flex;gap:16px;padding-bottom:24px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:15px;top:36px;bottom:0;width:1px;background:var(--border)}
+.step-num{width:32px;height:32px;border-radius:50%;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px}
+.step-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--text-muted);line-height:1.5}
+.panel-cta{margin-top:40px;padding-top:28px;border-top:1px solid var(--border);animation:fadeUp .4s .2s ease both}
+.panel-cta p{font-size:13px;color:var(--text-muted);margin-bottom:12px}
+
+/* RIGHT FORM */
+.right-panel{padding:48px 52px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+.form-container{max-width:560px;width:100%}
+.form-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:10px}
+.form-title{font-family:var(--font-head);font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.form-subtitle{color:var(--text-muted);font-size:14px;margin-bottom:28px}
+
+/* ACCOUNT TYPE SELECTOR */
+.role-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.role-card{background:var(--surface2);border:2px solid var(--border);border-radius:14px;padding:18px 16px;cursor:pointer;transition:all .2s;text-align:center}
+.role-card.selected{border-color:var(--accent);background:rgba(108,99,255,0.08)}
+.role-card:hover:not(.selected){border-color:rgba(108,99,255,0.4)}
+.role-icon{font-size:28px;margin-bottom:8px}
+.role-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.role-desc{font-size:11px;color:var(--text-muted)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:500;margin-bottom:7px;color:var(--text)}
+.form-label .req{color:var(--accent2);margin-left:2px}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:all .2s}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.1)}
+.form-input::placeholder{color:var(--text-dim)}
+.form-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;cursor:pointer;transition:all .2s;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238888aa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-select:focus{border-color:var(--accent)}
+.form-select option{background:var(--surface)}
+
+/* PASSWORD STRENGTH */
+.pass-strength{margin-top:6px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.pass-strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0}
+.pass-hint{font-size:11px;color:var(--text-dim);margin-top:4px}
+
+/* TERMS */
+.terms-wrap{display:flex;gap:10px;align-items:flex-start;margin-bottom:20px;font-size:13px;color:var(--text-muted)}
+.terms-wrap input{width:15px;height:15px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.terms-wrap a{color:var(--accent)}
+
+.form-error{color:var(--accent2);font-size:12px;margin-bottom:12px;padding:10px 14px;background:rgba(255,101,132,0.08);border:1px solid rgba(255,101,132,0.2);border-radius:8px;display:none}
+.form-error.show{display:block}
+
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;padding:14px 20px;border-radius:12px;font-family:var(--font-body);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(108,99,255,0.35)}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.spinner-btn{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+
+.form-footer{text-align:center;font-size:13px;color:var(--text-muted);margin-top:20px}
+.form-link{color:var(--accent);text-decoration:none}
+.form-link:hover{opacity:.7}
+
+/* SUCCESS */
+.success-box{display:none;text-align:center;padding:48px 32px}
+.success-icon{font-size:60px;margin-bottom:20px;animation:bounceIn .5s ease}
+@keyframes bounceIn{0%{transform:scale(0.5)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .register-layout{grid-template-columns:1fr}
+  .left-panel{display:none}
+  .right-panel{padding:32px 24px}
+}
+
+footer{background:var(--surface);border-top:1px solid var(--border);padding:18px 24px;text-align:center;font-size:12px;color:var(--text-dim)}
+footer a{color:var(--text-muted);text-decoration:none}
+footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Local<span>Experts</span><span class="nav-badge">+</span></a>
+  <div class="nav-right">
+    <span style="font-size:13px;color:var(--text-muted)">Already have an account?</span>
+    <a href="/pages/login.html" class="btn-nav-ghost">Sign In</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="register-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div class="panel-badge">🚀 Join 8,500+ Members</div>
+      <h1 class="panel-heading">List your business on<br/><em>LocalExperts+</em></h1>
+      <p class="panel-sub">Register as a business owner to list your business, manage customer reviews, and grow your presence across Maharashtra.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div><div class="step-title">Create your account</div><div class="step-desc">Fill in your details and choose your account type — customer or business owner.</div></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div><div class="step-title">Register your business</div><div class="step-desc">Add your business name, category, address, and photos. Submit for free.</div></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div><div class="step-title">Get verified &amp; go live</div><div class="step-desc">Our team verifies your listing within 24 hours. Start appearing in searches.</div></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div><div class="step-title">Grow your business</div><div class="step-desc">Respond to reviews, track analytics, and attract new customers every day.</div></div>
+        </div>
+      </div>
+      <div class="panel-cta">
+        <p>Already registered your business?</p>
+        <a href="/pages/business-dashboard.html" class="btn-nav-ghost" style="display:inline-flex;gap:6px;font-size:13px">📊 Go to Dashboard</a>
+      </div>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="right-panel">
+      <div class="form-container">
+
+        <div id="registerSection">
+          <div class="form-eyebrow">Create Account</div>
+          <h2 class="form-title">Join LocalExperts+ 🙌</h2>
+          <p class="form-subtitle">Free forever · No credit card needed · Verified within 24 hours</p>
+
+          <!-- ACCOUNT TYPE -->
+          <div style="margin-bottom:20px">
+            <div class="form-label">I am a…</div>
+            <div class="role-selector">
+              <div class="role-card selected" id="roleUser" onclick="selectRole('user')">
+                <div class="role-icon">👤</div>
+                <div class="role-name">Customer</div>
+                <div class="role-desc">Discover & review local businesses</div>
+              </div>
+              <div class="role-card" id="roleBiz" onclick="selectRole('business_owner')">
+                <div class="role-icon">🏪</div>
+                <div class="role-name">Business Owner</div>
+                <div class="role-desc">List and manage your business</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PERSONAL INFO -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">First Name <span class="req">*</span></label>
+              <input class="form-input" id="regFirstName" placeholder="Rahul"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name <span class="req">*</span></label>
+              <input class="form-input" id="regLastName" placeholder="Patil"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address <span class="req">*</span></label>
+            <input class="form-input" id="regEmail" type="email" placeholder="rahul@example.com"/>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input class="form-input" id="regPhone" type="tel" placeholder="9876543210"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Your City <span class="req">*</span></label>
+              <select class="form-select" id="regCity">
+                <option value="">Select city…</option>
+                <option value="vita">Vita</option>
+                <option value="pune">Pune</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="nashik">Nashik</option>
+                <option value="kolhapur">Kolhapur</option>
+                <option value="sangli">Sangli</option>
+                <option value="solapur">Solapur</option>
+                <option value="aurangabad">Aurangabad</option>
+                <option value="nagpur">Nagpur</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password <span class="req">*</span></label>
+            <input class="form-input" id="regPassword" type="password" placeholder="Min. 6 characters" oninput="checkStrength(this.value)"/>
+            <div class="pass-strength"><div class="pass-strength-bar" id="strengthBar"></div></div>
+            <div class="pass-hint" id="passHint">Enter a password to see strength</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password <span class="req">*</span></label>
+            <input class="form-input" id="regConfirm" type="password" placeholder="Repeat password"/>
+          </div>
+
+          <!-- EMAIL OTP VERIFICATION -->
+          <div class="form-group" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;">
+            <label class="form-label">📧 Email Verification OTP <span class="req">*</span></label>
+            <div style="display:flex;gap:8px;margin-bottom:8px;">
+              <button type="button" onclick="sendOtp()" id="sendOtpBtn" style="padding:0 16px;height:44px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;">Send OTP</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;" id="otpInputRow" style="display:none">
+              <input class="form-input" id="otpInput" type="text" placeholder="Enter 6-digit OTP" maxlength="6" style="flex:1;letter-spacing:4px;font-size:18px;font-weight:700;"/>
+              <button type="button" onclick="verifyOtpNow()" id="verifyOtpBtn" style="padding:0 16px;height:44px;background:#17a2b8;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;">Verify</button>
+            </div>
+            <div id="otpMsg" style="font-size:12px;color:var(--text-muted);"></div>
+          </div>
+
+          <!-- AADHAAR NUMBER -->
+          <div class="form-group">
+            <label class="form-label">🪪 Aadhaar Card Number <span class="req">*</span></label>
+            <input class="form-input" id="aadhaarNum" type="text" placeholder="XXXX XXXX XXXX" maxlength="14" oninput="formatAadhaar(this)"/>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">🔒 Your Aadhaar is stored securely and used only for identity verification.</div>
+          </div>
+
+          <!-- SHOP NUMBER (for business owners) -->
+          <div class="form-group" id="shopNumGroup" style="display:none;">
+            <label class="form-label">🏪 Shop / Business Registration Number</label>
+            <input class="form-input" id="shopNum" type="text" placeholder="e.g. SHOP/2024/12345"/>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Enter your GST, MSME, or Shop Act registration number.</div>
+          </div>
+
+          <!-- LOCATION -->
+          <div class="form-group">
+            <label class="form-label">📍 Your Location <span class="req">*</span></label>
+            <!-- Toggle -->
+            <div style="display:flex;gap:10px;margin-bottom:12px;">
+              <label id="locOptDetect" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 16px;border-radius:10px;border:2px solid var(--accent);background:rgba(108,99,255,0.08);flex:1;font-size:13px;font-weight:600">
+                <input type="radio" name="locMethod" value="detect" checked onchange="toggleLocMethod('detect')" style="accent-color:var(--accent);width:15px;height:15px"/>
+                📍 Auto Detect
+              </label>
+              <label id="locOptManual" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 16px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);flex:1;font-size:13px;font-weight:600">
+                <input type="radio" name="locMethod" value="manual" onchange="toggleLocMethod('manual')" style="accent-color:var(--accent);width:15px;height:15px"/>
+                ✏️ Enter Address
+              </label>
+            </div>
+            <!-- Auto detect -->
+            <div id="locDetectDiv">
+              <div style="display:flex;gap:8px;margin-bottom:6px;">
+                <input class="form-input" id="locationInput" placeholder="Click Detect to get your location" readonly style="flex:1;background:var(--surface2);"/>
+                <button type="button" onclick="detectLocation()" id="locBtn" style="padding:0 14px;background:#28a745;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;">📍 Detect</button>
+              </div>
+              <div id="locMsg" style="font-size:12px;color:var(--text-muted);"></div>
+            </div>
+            <!-- Manual address -->
+            <div id="locManualDiv" style="display:none;">
+              <input class="form-input" id="locationManual" placeholder="Enter full address (e.g. Shop 5, Main Road, Vita, Sangli 415311)"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">📍 Enter your complete address including city and PIN code.</div>
+            </div>
+            <input type="hidden" id="userLat"/>
+            <input type="hidden" id="userLng"/>
+          </div>
+
+          <!-- BUSINESS SECTION (shown when role=business_owner) -->
+          <div id="bizSection" style="display:none;border-top:1px solid var(--border);padding-top:20px;margin-top:4px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:14px">🏪 Business Details (Optional — you can add this later)</div>
+            <div class="form-group">
+              <label class="form-label">Business Name</label>
+              <input class="form-input" id="bizName" placeholder="e.g. Patil General Store"/>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="bizCat">
+                  <option value="">Select…</option>
+                  <option>Hotels</option><option>Food</option><option>Healthcare</option>
+                  <option>Grocery</option><option>Education</option><option>Services</option>
+                  <option>Electronics</option><option>Fashion</option><option>Finance</option>
+                  <option>Transport</option><option>Entertainment</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Business City</label>
+                <select class="form-select" id="bizCity">
+                  <option value="">Same as above…</option>
+                  <option value="vita">Vita</option><option value="pune">Pune</option>
+                  <option value="mumbai">Mumbai</option><option value="nashik">Nashik</option>
+                  <option value="kolhapur">Kolhapur</option><option value="sangli">Sangli</option>
+                  <option value="solapur">Solapur</option><option value="aurangabad">Aurangabad</option>
+                  <option value="nagpur">Nagpur</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Phone</label>
+              <input class="form-input" id="bizPhone" placeholder="02346-XXXXXX"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Address</label>
+              <input class="form-input" id="bizAddr" placeholder="Shop No, Street, Area, PIN"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">🟢 GSTIN (GST Number) <span class="req">*</span></label>
+              <input class="form-input" id="bizGstin" placeholder="e.g. 27AAPFU0939F1ZV" maxlength="15" oninput="this.value=this.value.toUpperCase()"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">🔒 15-digit GST Identification Number — required for business verification by admin.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea class="form-input" id="bizDesc" style="min-height:70px;resize:vertical" placeholder="Briefly describe your business, products, and services…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Working Hours</label>
+              <input class="form-input" id="bizHours" placeholder="e.g. Mon–Sat 9:00 AM – 9:00 PM"/>
+            </div>
+
+            <!-- BUSINESS LOCATION -->
+            <div class="form-group">
+              <label class="form-label">📍 Business Location <span class="req">*</span></label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input class="form-input" id="bizLocationInput" placeholder="Click button to detect business location" readonly style="flex:1;background:#f8f9fa;"/>
+                <button type="button" onclick="detectBizLocation()" id="bizLocBtn" style="padding:0 14px;height:44px;background:#28a745;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;">📍 Detect</button>
+              </div>
+              <input type="hidden" id="bizLat"/>
+              <input type="hidden" id="bizLng"/>
+              <div id="bizLocMsg" style="font-size:12px;margin-top:4px;color:var(--text-dim);"></div>
+            </div>
+
+            <!-- BUSINESS EMAIL OTP VERIFICATION -->
+            <div class="form-group">
+              <label class="form-label">📧 Business Email Verification OTP <span class="req">*</span></label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input class="form-input" id="bizEmail" type="email" placeholder="Business email address" style="flex:1;"/>
+                <button type="button" onclick="sendBizOtp()" id="sendBizOtpBtn" style="padding:0 16px;height:44px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;">Send OTP</button>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+                <input class="form-input" id="bizOtpInput" type="text" placeholder="Enter 6-digit OTP" maxlength="6" style="flex:1;letter-spacing:4px;font-size:18px;font-weight:700;"/>
+                <button type="button" onclick="verifyBizOtpNow()" id="verifyBizOtpBtn" style="padding:0 14px;height:44px;background:#17a2b8;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;">Verify</button>
+              </div>
+              <div id="bizOtpMsg" style="font-size:12px;margin-top:4px;color:var(--text-dim);"></div>
+            </div>
+          </div>
+
+          <div class="terms-wrap">
+            <input type="checkbox" id="termsCheck"/>
+            <span>I agree to the <a href="#" class="form-link">Terms of Service</a> and <a href="#" class="form-link">Privacy Policy</a>. I confirm the information provided is accurate.</span>
+          </div>
+
+          <div class="form-error" id="regError"></div>
+          <button class="btn-primary" id="regBtn" onclick="handleRegister()">
+            <span id="regBtnText">Create Account →</span>
+            <div class="spinner-btn" id="regSpinner"></div>
+          </button>
+          <p class="form-footer">Already have an account? <a href="/pages/login.html" class="form-link">Sign in →</a></p>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="success-box" id="successBox">
+          <div class="success-icon">🎉</div>
+          <h2 style="font-family:var(--font-head);font-size:26px;font-weight:800;margin-bottom:8px">Account Created!</h2>
+          <p style="color:var(--text-muted);margin-bottom:8px" id="successName"></p>
+          <p style="color:var(--text-dim);font-size:13px;margin-bottom:32px" id="successRole"></p>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a href="/" class="btn-nav-ghost" style="display:inline-flex">🏠 Explore Businesses</a>
+            <a href="/pages/business-dashboard.html" class="btn-nav" style="display:inline-flex" id="dashLink">📊 My Dashboard</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <a href="/">LocalExperts+</a> &nbsp;·&nbsp;
+  <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+  <a href="#">Terms of Use</a> &nbsp;·&nbsp;
+  Made with ❤️ in Maharashtra
+</footer>
+
+<script>
+const API = 'http://localhost:5000/api';
+let selectedRole = 'user';
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('roleUser').classList.toggle('selected', role === 'user');
+  document.getElementById('roleBiz').classList.toggle('selected', role === 'business_owner');
+  document.getElementById('bizSection').style.display = role === 'business_owner' ? 'block' : 'none';
+  document.getElementById('shopNumGroup').style.display = role === 'business_owner' ? 'block' : 'none';
+  document.getElementById('regBtnText').textContent = role === 'business_owner' ? 'Create Account & List Business →' : 'Create Account →';
+}
+
+function toggleLocMethod(method) {
+  const detectDiv = document.getElementById('locDetectDiv');
+  const manualDiv = document.getElementById('locManualDiv');
+  const optDetect = document.getElementById('locOptDetect');
+  const optManual = document.getElementById('locOptManual');
+  if (method === 'detect') {
+    detectDiv.style.display = 'block';
+    manualDiv.style.display = 'none';
+    optDetect.style.border = '2px solid var(--accent)';
+    optDetect.style.background = 'rgba(108,99,255,0.08)';
+    optManual.style.border = '2px solid var(--border)';
+    optManual.style.background = 'var(--surface2)';
+  } else {
+    detectDiv.style.display = 'none';
+    manualDiv.style.display = 'block';
+    optDetect.style.border = '2px solid var(--border)';
+    optDetect.style.background = 'var(--surface2)';
+    optManual.style.border = '2px solid var(--accent)';
+    optManual.style.background = 'rgba(108,99,255,0.08)';
+    // Clear GPS values when switching to manual
+    document.getElementById('userLat').value = '';
+    document.getElementById('userLng').value = '';
+  }
+}
+
+function checkStrength(val) {
+  const bar = document.getElementById('strengthBar');
+  const hint = document.getElementById('passHint');
+  if (!val) { bar.style.width = '0'; hint.textContent = 'Enter a password'; return; }
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const colors = ['#ff6584','#ff9f43','#f5a623','#43e97b','#00cec9'];
+  const labels = ['Very Weak','Weak','Fair','Strong','Very Strong'];
+  bar.style.width = `${score * 20}%`;
+  bar.style.background = colors[score-1] || '#555';
+  hint.textContent = labels[score-1] || 'Too short';
+  hint.style.color = colors[score-1] || 'var(--text-dim)';
+}
+
+function showError(msg) {
+  const el = document.getElementById('regError');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideError() {
+  document.getElementById('regError').classList.remove('show');
+}
+function setLoading(on) {
+  document.getElementById('regBtnText').style.display = on ? 'none' : 'block';
+  document.getElementById('regSpinner').style.display = on ? 'block' : 'none';
+  document.getElementById('regBtn').disabled = on;
+}
+
+// ── OTP Functions ─────────────────────────────────────────────
+let otpVerified = false;
+
+async function sendOtp() {
+  const email = document.getElementById('regEmail').value.trim();
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    document.getElementById('otpMsg').innerHTML = '<span style="color:red;">⚠️ Please enter a valid email first.</span>';
+    return;
+  }
+  const btn = document.getElementById('sendOtpBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  document.getElementById('otpMsg').innerHTML = '📤 Sending OTP...';
+  try {
+    const res = await fetch(`${API}/otp/send`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('otpMsg').innerHTML = '<span style="color:green;">✅ OTP sent! Check your email inbox. Valid for 30 minutes.</span>';
+      // Show OTP input row
+      document.getElementById('otpInputRow').style.display = 'flex';
+      // Countdown 60 seconds for resend
+      let sec = 60;
+      const timer = setInterval(() => {
+        btn.textContent = `Resend (${sec}s)`;
+        sec--;
+        if (sec < 0) { clearInterval(timer); btn.disabled = false; btn.textContent = 'Resend OTP'; }
+      }, 1000);
+    } else {
+      document.getElementById('otpMsg').innerHTML = `<span style="color:red;">❌ ${data.message}</span>`;
+      btn.disabled = false;
+      btn.textContent = 'Send OTP';
+    }
+  } catch(e) {
+    document.getElementById('otpMsg').innerHTML = '<span style="color:orange;">⚠️ Could not send OTP. Demo mode active.</span>';
+    btn.disabled = false;
+    btn.textContent = 'Send OTP';
+    otpVerified = true; // demo fallback
+  }
+}
+
+async function verifyOtpNow() {
+  const email = document.getElementById('regEmail').value.trim();
+  const otp = document.getElementById('otpInput').value.trim();
+  const msg = document.getElementById('otpMsg');
+  if (!otp || otp.length !== 6) {
+    msg.innerHTML = '<span style="color:red;">⚠️ Please enter the 6-digit OTP.</span>';
+    return;
+  }
+  const btn = document.getElementById('verifyOtpBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+  try {
+    const res = await fetch(`${API}/otp/verify`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+    if (data.success) {
+      otpVerified = true;
+      msg.innerHTML = '<span style="color:green;">✅ Email verified successfully!</span>';
+      btn.textContent = '✅ Verified';
+      btn.style.background = '#28a745';
+      document.getElementById('otpInput').disabled = true;
+    } else {
+      msg.innerHTML = '<span style="color:red;">❌ Invalid OTP. Please check and try again.</span>';
+      btn.disabled = false; btn.textContent = 'Verify';
+    }
+  } catch(e) {
+    otpVerified = true;
+    msg.innerHTML = '<span style="color:orange;">⚠️ Demo mode — verified.</span>';
+    btn.textContent = '✅ Verified';
+  }
+}
+
+async function verifyOtpBeforeRegister(email) {
+  // OTP must already be verified via "Verify" button before submitting
+  if (otpVerified) return true;
+  showError('❌ Please verify your email OTP first. Click "Send OTP", enter the code, then click "Verify".');
+  return false;
+}
+
+// ── Aadhaar Format ────────────────────────────────────────────
+function formatAadhaar(input) {
+  let val = input.value.replace(/\D/g, '').substring(0, 12);
+  input.value = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+
+// ── Location Detection ────────────────────────────────────────
+function detectLocation() {
+  const btn = document.getElementById('locBtn');
+  const msg = document.getElementById('locMsg');
+  btn.disabled = true;
+  btn.textContent = '⏳ Detecting...';
+  msg.textContent = 'Getting your location...';
+
+  if (!navigator.geolocation) {
+    msg.innerHTML = '<span style="color:red;">❌ Geolocation not supported by your browser.</span>';
+    btn.disabled = false; btn.textContent = '📍 Detect';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      document.getElementById('userLat').value = lat;
+      document.getElementById('userLng').value = lng;
+
+      // Reverse geocode using free API
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const data = await res.json();
+        const addr = data.display_name || `${lat}, ${lng}`;
+        document.getElementById('locationInput').value = addr;
+        msg.innerHTML = `<span style="color:green;">✅ Location detected: ${data.address?.city || data.address?.town || data.address?.village || 'Your location'}</span>`;
+      } catch(e) {
+        document.getElementById('locationInput').value = `${lat}, ${lng}`;
+        msg.innerHTML = `<span style="color:green;">✅ Location detected: ${lat}, ${lng}</span>`;
+      }
+      btn.disabled = false; btn.textContent = '🔄 Re-detect';
+    },
+    (err) => {
+      msg.innerHTML = '<span style="color:red;">❌ Location access denied. Please allow location permission.</span>';
+      btn.disabled = false; btn.textContent = '📍 Detect';
+    }
+  );
+}
+
+async function handleRegister() {
+  hideError();
+  const firstName = document.getElementById('regFirstName').value.trim();
+  const lastName  = document.getElementById('regLastName').value.trim();
+  const email     = document.getElementById('regEmail').value.trim();
+  const phone     = document.getElementById('regPhone').value.trim();
+  const city      = document.getElementById('regCity').value;
+  const password  = document.getElementById('regPassword').value;
+  const confirm   = document.getElementById('regConfirm').value;
+  const terms     = document.getElementById('termsCheck').checked;
+
+  if (!firstName || !lastName) { showError('Please enter your full name.'); return; }
+  if (!email || !/\S+@\S+\.\S+/.test(email)) { showError('Please enter a valid email address.'); return; }
+  if (!city) { showError('Please select your city.'); return; }
+  if (password.length < 6) { showError('Password must be at least 6 characters.'); return; }
+  if (password !== confirm) { showError('Passwords do not match.'); return; }
+
+  // Aadhaar validation
+  const aadhaar = document.getElementById('aadhaarNum').value.replace(/\s/g,'');
+  if (!aadhaar || aadhaar.length !== 12) { showError('Please enter a valid 12-digit Aadhaar number.'); return; }
+
+  // Location validation
+  const locMethod = document.querySelector('input[name="locMethod"]:checked')?.value || 'detect';
+  const lat = document.getElementById('userLat').value;
+  const lng = document.getElementById('userLng').value;
+  const manualAddr = document.getElementById('locationManual')?.value?.trim();
+  if (locMethod === 'detect' && (!lat || !lng)) {
+    showError('Please detect your location using the 📍 Detect button, or switch to "Enter Address".');
+    return;
+  }
+  if (locMethod === 'manual' && !manualAddr) {
+    showError('Please enter your full address.');
+    return;
+  }
+
+  if (!terms) { showError('Please agree to the Terms of Service to continue.'); return; }
+
+  // OTP Verification
+  const otpOk = await verifyOtpBeforeRegister(email);
+  if (!otpOk) return;
+
+  // Business owner extra validations
+  if (selectedRole === 'business_owner') {
+    const gstin = document.getElementById('bizGstin')?.value?.trim();
+    if (!gstin || gstin.length !== 15) {
+      showError('Please enter a valid 15-digit GSTIN for your business.');
+      return;
+    }
+    const bizLat = document.getElementById('bizLat').value;
+    const bizLng = document.getElementById('bizLng').value;
+    if (!bizLat || !bizLng) {
+      showError('Please detect your business location using the 📍 Detect button in the Business Details section.');
+      return;
+    }
+    if (!bizOtpVerified) {
+      showError('Please verify your business email OTP before submitting.');
+      return;
+    }
+  }
+
+  const name = `${firstName} ${lastName}`;
+
+  setLoading(true);
+
+  try {
+    const res = await fetch(`${API}/auth/signup`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name, email, password, city, role: selectedRole }),
+      signal: AbortSignal.timeout(4000)
+    });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem('le_token', data.token);
+      localStorage.setItem('le_user', JSON.stringify({...data.user, phone}));
+      if (selectedRole === 'business_owner') await submitBusiness(data.token, city);
+      showSuccess(name);
+    } else {
+      showError(data.message || 'Registration failed. Please try again.');
+    }
+  } catch(e) {
+    // Demo mode
+    const user = { name, email, role: selectedRole, city, phone };
+    localStorage.setItem('le_user', JSON.stringify(user));
+    localStorage.setItem('le_token', 'demo_token_' + Date.now());
+    showSuccess(name);
+  }
+
+  setLoading(false);
+}
+
+async function submitBusiness(token, userCity) {
+  const bizName  = document.getElementById('bizName').value.trim();
+  if (!bizName) return;
+  const cat   = document.getElementById('bizCat').value;
+  const city  = document.getElementById('bizCity').value || userCity;
+  const phone = document.getElementById('bizPhone').value.trim();
+  const addr  = document.getElementById('bizAddr').value.trim();
+  const desc  = document.getElementById('bizDesc').value.trim();
+  const hours = document.getElementById('bizHours').value.trim();
+  const bizLat = document.getElementById('bizLat').value;
+  const bizLng = document.getElementById('bizLng').value;
+  const bizEmailVal = document.getElementById('bizEmail').value.trim();
+  if (!cat || !city) return;
+
+  try {
+    await fetch(`${API}/businesses`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body: JSON.stringify({
+        name: bizName, category: cat, description: desc||'Business listing', city,
+        contact: { phone, email: bizEmailVal },
+        address: { full: addr, city },
+        hours: hours||'Check with business',
+        mapX: bizLng || null,
+        mapY: bizLat || null,
+        gstin: document.getElementById('bizGstin')?.value?.trim() || null
+      }),
+      signal: AbortSignal.timeout(4000)
+    });
+  } catch(e) { /* demo mode — ignore */ }
+}
+
+// ── Business Location Detection ───────────────────────────────
+function detectBizLocation() {
+  const btn = document.getElementById('bizLocBtn');
+  const msg = document.getElementById('bizLocMsg');
+  btn.disabled = true;
+  btn.textContent = '⏳ Detecting...';
+  msg.textContent = 'Getting business location...';
+
+  if (!navigator.geolocation) {
+    msg.innerHTML = '<span style="color:red;">❌ Geolocation not supported by your browser.</span>';
+    btn.disabled = false; btn.textContent = '📍 Detect';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      document.getElementById('bizLat').value = lat;
+      document.getElementById('bizLng').value = lng;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const data = await res.json();
+        const addr = data.display_name || `${lat}, ${lng}`;
+        document.getElementById('bizLocationInput').value = addr;
+        // Auto-fill bizAddr if empty
+        if (!document.getElementById('bizAddr').value) {
+          document.getElementById('bizAddr').value = addr;
+        }
+        msg.innerHTML = `<span style="color:green;">✅ Business location detected: ${data.address?.city || data.address?.town || data.address?.village || 'Your location'}</span>`;
+      } catch(e) {
+        document.getElementById('bizLocationInput').value = `${lat}, ${lng}`;
+        msg.innerHTML = `<span style="color:green;">✅ Location detected: ${lat}, ${lng}</span>`;
+      }
+      btn.disabled = false; btn.textContent = '🔄 Re-detect';
+    },
+    () => {
+      msg.innerHTML = '<span style="color:red;">❌ Location access denied. Please allow location permission.</span>';
+      btn.disabled = false; btn.textContent = '📍 Detect';
+    }
+  );
+}
+
+// ── Business OTP Functions ────────────────────────────────────
+let bizOtpVerified = false;
+
+async function sendBizOtp() {
+  const email = document.getElementById('bizEmail').value.trim();
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    document.getElementById('bizOtpMsg').innerHTML = '<span style="color:red;">⚠️ Please enter a valid business email first.</span>';
+    return;
+  }
+  const btn = document.getElementById('sendBizOtpBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  document.getElementById('bizOtpMsg').innerHTML = '📤 Sending OTP...';
+  try {
+    const res = await fetch(`${API}/otp/send`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('bizOtpMsg').innerHTML = '<span style="color:green;">✅ OTP sent to business email! Check your inbox.</span>';
+      let sec = 60;
+      const timer = setInterval(() => {
+        btn.textContent = `Resend (${sec}s)`;
+        sec--;
+        if (sec < 0) { clearInterval(timer); btn.disabled = false; btn.textContent = 'Resend OTP'; }
+      }, 1000);
+    } else {
+      document.getElementById('bizOtpMsg').innerHTML = `<span style="color:red;">❌ ${data.message}</span>`;
+      btn.disabled = false; btn.textContent = 'Send OTP';
+    }
+  } catch(e) {
+    document.getElementById('bizOtpMsg').innerHTML = '<span style="color:orange;">⚠️ Demo mode — OTP skipped.</span>';
+    btn.disabled = false; btn.textContent = 'Send OTP';
+    bizOtpVerified = true; // demo fallback
+  }
+}
+
+async function verifyBizOtpNow() {
+  const email = document.getElementById('bizEmail').value.trim();
+  const otp   = document.getElementById('bizOtpInput').value.trim();
+  const msg   = document.getElementById('bizOtpMsg');
+  if (!otp || otp.length !== 6) {
+    msg.innerHTML = '<span style="color:red;">⚠️ Please enter the 6-digit OTP.</span>';
+    return;
+  }
+  const btn = document.getElementById('verifyBizOtpBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+  try {
+    const res = await fetch(`${API}/otp/verify`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+    if (data.success) {
+      bizOtpVerified = true;
+      msg.innerHTML = '<span style="color:green;">✅ Business email verified!</span>';
+      btn.textContent = '✅ Verified';
+    } else {
+      msg.innerHTML = '<span style="color:red;">❌ Invalid or expired OTP. Please try again.</span>';
+      btn.disabled = false; btn.textContent = 'Verify';
+    }
+  } catch(e) {
+    bizOtpVerified = true; // demo fallback
+    msg.innerHTML = '<span style="color:orange;">⚠️ Demo mode — verified.</span>';
+    btn.textContent = '✅ Verified';
+  }
+}
+
+function showSuccess(name) {
+  document.getElementById('registerSection').style.display = 'none';
+  const box = document.getElementById('successBox');
+  box.style.display = 'block';
+  document.getElementById('successName').textContent = `Welcome, ${name}!`;
+  document.getElementById('successRole').textContent = selectedRole === 'business_owner'
+    ? '🏪 Your business has been submitted for review. You can manage it from your dashboard.'
+    : '🔍 Start discovering the best local businesses in your city.';
+  if (selectedRole !== 'business_owner') {
+    document.getElementById('dashLink').style.display = 'none';
+  }
+  setTimeout(() => { window.location.href = selectedRole === 'business_owner' ? '/pages/business-dashboard.html' : '/'; }, 3000);
+}
+</script>
+</body>
+</html>

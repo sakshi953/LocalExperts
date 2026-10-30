@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Business Profile — LocalExperts+</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;
+  --accent:#6c63ff;--accent2:#ff6584;--accent3:#43e97b;
+  --text:#f0f0f8;--text-muted:#8888aa;--text-dim:#555570;
+  --card-bg:#161622;--glow:rgba(108,99,255,0.25);--radius:16px;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:999;backdrop-filter:blur(24px);background:rgba(10,10,15,0.92);border-bottom:1px solid var(--border);padding:0 24px;height:62px;display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-logo span{color:var(--accent)}
+.nav-badge{background:rgba(108,99,255,0.15);color:var(--accent);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;border:1px solid rgba(108,99,255,0.3)}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);margin-left:8px}
+.breadcrumb a{color:var(--text-muted);text-decoration:none}
+.breadcrumb a:hover{color:var(--accent)}
+.nav-right{display:flex;gap:8px;align-items:center;margin-left:auto}
+.btn-nav{background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:10px;font-family:var(--font-body);font-weight:500;cursor:pointer;font-size:13px;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-nav:hover{opacity:.85}
+.btn-nav-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:7px 14px;border-radius:10px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-nav-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* HERO */
+.biz-hero{padding-top:62px;background:linear-gradient(180deg,rgba(108,99,255,0.08) 0%,transparent 100%);border-bottom:1px solid var(--border)}
+.hero-inner{max-width:1100px;margin:0 auto;padding:48px 24px 36px}
+.hero-top{display:flex;align-items:flex-start;gap:24px;margin-bottom:28px;flex-wrap:wrap}
+.hero-icon{font-size:56px;width:80px;height:80px;background:var(--surface2);border:1px solid var(--border);border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hero-info{flex:1}
+.hero-badges{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.h-badge{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700}
+.h-badge-cat{background:rgba(108,99,255,0.12);color:var(--accent);border:1px solid rgba(108,99,255,0.25)}
+.h-badge-verified{background:rgba(67,233,123,0.1);color:var(--accent3);border:1px solid rgba(67,233,123,0.25)}
+.h-badge-gold{background:rgba(245,166,35,0.12);color:#f5a623;border:1px solid rgba(245,166,35,0.25)}
+.h-badge-open{background:rgba(67,233,123,0.1);color:var(--accent3);border:1px solid rgba(67,233,123,0.2)}
+.h-badge-closed{background:rgba(255,101,132,0.1);color:var(--accent2);border:1px solid rgba(255,101,132,0.2)}
+.hero-name{font-family:var(--font-head);font-size:clamp(22px,3.5vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:8px;line-height:1.1}
+.hero-rating{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.stars-big{color:#f5a623;font-size:18px;letter-spacing:2px}
+.rating-num{font-family:var(--font-head);font-size:20px;font-weight:800}
+.review-count{font-size:13px;color:var(--text-muted)}
+.hero-address{font-size:14px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* CONTENT GRID */
+.content{max-width:1100px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 340px;gap:24px}
+@media(max-width:900px){.content{grid-template-columns:1fr}.contact-sidebar{order:-1}}
+
+/* SECTIONS */
+.section{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.section-title{font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--text-muted);margin-bottom:18px}
+
+/* TABS */
+.page-tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px;margin-bottom:24px;width:fit-content;flex-wrap:wrap}
+.ptab{padding:7px 18px;border-radius:9px;border:none;background:none;color:var(--text-muted);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s}
+.ptab.active{background:var(--accent);color:#fff}
+.ptab-content{display:none}
+.ptab-content.active{display:block}
+
+/* PRODUCTS */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.product-chip{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;text-align:center;transition:border-color .2s}
+.product-chip:hover{border-color:rgba(108,99,255,0.3)}
+
+/* HIGHLIGHTS */
+.highlight-list{display:flex;flex-wrap:wrap;gap:8px}
+.hl-item{background:rgba(67,233,123,0.08);border:1px solid rgba(67,233,123,0.2);border-radius:100px;padding:5px 14px;font-size:13px;color:var(--accent3)}
+
+/* REVIEWS */
+.review-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.reviewer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.reviewer-left{display:flex;align-items:center;gap:10px}
+.r-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.r-name{font-size:14px;font-weight:600}
+.r-date{font-size:11px;color:var(--text-dim)}
+.r-stars{color:#f5a623;font-size:14px}
+.r-text{font-size:13px;color:var(--text-muted);line-height:1.6}
+
+/* WRITE REVIEW */
+.write-review{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.15);border-radius:14px;padding:22px;margin-top:16px}
+.star-row{display:flex;gap:8px;margin-bottom:14px}
+.star-btn{font-size:26px;cursor:pointer;opacity:.35;transition:all .15s;background:none;border:none}
+.star-btn.on,.star-btn:hover{opacity:1;transform:scale(1.15)}
+.review-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;min-height:80px;resize:vertical}
+.review-textarea:focus{border-color:var(--accent)}
+.review-name-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+
+/* CONTACT SIDEBAR */
+.contact-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px}
+.contact-title{font-family:var(--font-head);font-size:14px;font-weight:700;margin-bottom:16px}
+.contact-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.contact-item:last-child{border-bottom:none}
+.c-icon{font-size:16px;width:20px;text-align:center}
+.c-label{color:var(--text-muted);font-size:11px;display:block;margin-bottom:1px}
+.c-val{color:var(--text);font-weight:500}
+.c-val a{color:var(--accent);text-decoration:none}
+.c-val a:hover{opacity:.7}
+
+.map-placeholder{background:var(--surface2);border:1px solid var(--border);border-radius:12px;height:180px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-dim);margin-bottom:16px;flex-direction:column;gap:8px}
+
+/* SHARE */
+.share-row{display:flex;gap:8px;flex-wrap:wrap}
+.share-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.share-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* RELATED */
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.related-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s}
+.related-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.rc-icon{font-size:24px;margin-bottom:8px}
+.rc-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.rc-meta{font-size:11px;color:var(--text-muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid rgba(67,233,123,0.3);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--accent3);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Local<span>Experts</span><span class="nav-badge">+</span></a>
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> › 
+    <a href="index.html">Vita</a> › 
+    <span id="breadcrumbCat">Hotels</span> › 
+    <span id="breadcrumbName" style="color:var(--text)">Business</span>
+  </div>
+  <div class="nav-right">
+    <a href="/pages/login.html" class="btn-nav-ghost" id="navLoginBtn">Sign In</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="biz-hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="hero-icon" id="heroIcon">🏪</div>
+      <div class="hero-info">
+        <div class="hero-badges" id="heroBadges"></div>
+        <h1 class="hero-name" id="heroName">Loading…</h1>
+        <div class="hero-rating">
+          <div class="stars-big" id="heroStars">★★★★★</div>
+          <div class="rating-num" id="heroRating">0.0</div>
+          <div class="review-count" id="heroReviewCount">(0 reviews)</div>
+        </div>
+        <div class="hero-address" id="heroAddress">📍 Loading address…</div>
+        <div class="hero-actions">
+          <button class="btn-nav" id="callBtn" onclick="callBusiness()">📞 Call Now</button>
+          <button class="btn-nav-ghost" id="waBtn" onclick="whatsappBusiness()">💬 WhatsApp</button>
+          <button class="btn-nav-ghost" onclick="saveToFavourites()">🔖 Save</button>
+          <button class="btn-nav-ghost" onclick="shareProfile()">🔗 Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- LEFT COLUMN -->
+  <div>
+    <!-- TABS -->
+    <div class="page-tabs">
+      <button class="ptab active" onclick="switchTab('info')">ℹ️ Info</button>
+      <button class="ptab" onclick="switchTab('products')">🛍️ Products</button>
+      <button class="ptab" onclick="switchTab('reviews')">⭐ Reviews</button>
+    </div>
+
+    <!-- INFO TAB -->
+    <div class="ptab-content active" id="ptab-info">
+      <div class="section">
+        <div class="section-title">About This Business</div>
+        <div class="section-sub" id="bizDescription">Loading…</div>
+        <div id="highlightsWrap"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Business Hours</div>
+        <div style="font-size:14px;color:var(--text-muted)" id="bizHours">Loading…</div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="ptab-content" id="ptab-products">
+      <div class="section">
+        <div class="section-title">Products & Services</div>
+        <div class="section-sub">Available items and price range</div>
+        <div class="products-grid" id="productsGrid">
+          <div style="color:var(--text-muted);font-size:13px">No products listed yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div class="ptab-content" id="ptab-reviews">
+      <div class="section">
+        <div class="section-title">Customer Reviews</div>
+        <div class="section-sub" id="reviewSubtitle">Loading…</div>
+        <div id="reviewsList"></div>
+
+        <!-- Write Review -->
+        <div class="write-review" id="writeReview">
+          <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:14px">Write a Review</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">Rate your experience:</div>
+          <div class="star-row" id="starRow">
+            <button class="star-btn" onclick="setRating(1)">★</button>
+            <button class="star-btn" onclick="setRating(2)">★</button>
+            <button class="star-btn" onclick="setRating(3)">★</button>
+            <button class="star-btn" onclick="setRating(4)">★</button>
+            <button class="star-btn" onclick="setRating(5)">★</button>
+          </div>
+          <div class="review-name-row">
+            <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px">Your Name *</label><input class="review-textarea" id="reviewerName" placeholder="Rahul Patil" style="min-height:unset;height:42px;resize:none"/></div>
+            <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px">City</label><input class="review-textarea" id="reviewerCity" placeholder="Vita" style="min-height:unset;height:42px;resize:none"/></div>
+          </div>
+          <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px">Your Review *</label>
+          <textarea class="review-textarea" id="reviewText" placeholder="Share your experience with this business…"></textarea>
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+            <button class="btn-nav" onclick="submitReview()">Submit Review →</button>
+            <span style="font-size:12px;color:var(--text-dim)" id="ratingPreview">Select a star rating above</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATED BUSINESSES -->
+    <div class="section">
+      <div class="section-title">Related Businesses Nearby</div>
+      <div class="section-sub">Other businesses in the same category</div>
+      <div class="related-grid" id="relatedGrid">
+        <div style="color:var(--text-muted);font-size:13px">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="contact-sidebar">
+    <div class="contact-card">
+      <div class="contact-title">📋 Contact Information</div>
+      <div class="contact-item">
+        <span class="c-icon">📞</span>
+        <div><span class="c-label">Phone</span><span class="c-val" id="cPhone">—</span></div>
+      </div>
+      <div class="contact-item">
+        <span class="c-icon">💬</span>
+        <div><span class="c-label">WhatsApp</span><span class="c-val" id="cWa">—</span></div>
+      </div>
+      <div class="contact-item">
+        <span class="c-icon">✉️</span>
+        <div><span class="c-label">Email</span><span class="c-val" id="cEmail">—</span></div>
+      </div>
+      <div class="contact-item">
+        <span class="c-icon">🌐</span>
+        <div><span class="c-label">Website</span><span class="c-val" id="cWeb">—</span></div>
+      </div>
+      <div class="contact-item">
+        <span class="c-icon">📍</span>
+        <div><span class="c-label">Address</span><span class="c-val" id="cAddr">—</span></div>
+      </div>
+      <div class="contact-item">
+        <span class="c-icon">⏰</span>
+        <div><span class="c-label">Hours</span><span class="c-val" id="cHours">—</span></div>
+      </div>
+      <div class="contact-item">
+        <span class="c-icon">🔵</span>
+        <div><span class="c-label">Status</span><span class="c-val" id="cStatus">—</span></div>
+      </div>
+    </div>
+
+    <div class="map-placeholder" id="mapPlaceholder">
+      <div style="font-size:28px">🗺️</div>
+      <div>Map View</div>
+      <div style="font-size:11px">Click for directions</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-title">🔗 Share This Business</div>
+      <div class="share-row">
+        <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+        <button class="share-btn" onclick="copyLink()">🔗 Copy Link</button>
+        <button class="share-btn" onclick="shareTwitter()">🐦 Twitter</button>
+      </div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-title">📊 Business Stats</div>
+      <div class="contact-item"><span class="c-icon">👁️</span><div><span class="c-label">Profile Views</span><span class="c-val" id="sViews">—</span></div></div>
+      <div class="contact-item"><span class="c-icon">🔍</span><div><span class="c-label">Search Appearances</span><span class="c-val" id="sSearch">—</span></div></div>
+      <div class="contact-item"><span class="c-icon">⭐</span><div><span class="c-label">Average Rating</span><span class="c-val" id="sRating">—</span></div></div>
+      <div class="contact-item"><span class="c-icon">💬</span><div><span class="c-label">Total Reviews</span><span class="c-val" id="sReviews">—</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Load business from URL param or localStorage
+const params = new URLSearchParams(location.search);
+const bizId = params.get('id');
+
+let BIZ = null;
+let selectedRating = 0;
+
+// Demo businesses
+const DEMO_BUSINESSES = {
+  b1:{_id:'b1',name:'Hotel Vita Mayni',category:'Hotels',icon:'🏨',description:'Top-rated hotel in Vita. 4.4 rating with over 1,150 verified reviews. Clean rooms, friendly staff, 24-hour service, and excellent hospitality. Perfect for business and leisure travellers visiting Sangli district.',address:{full:'Vita Mayni Road, Vita City, Sangli - 415311'},city:'vita',avgRating:4.4,reviewCount:1150,isOpen:true,isVerified:true,badge:'Top Hotel ⭐',hours:'24 Hours · All Days',contact:{phone:'07383119074',whatsapp:'917383119074',email:'hotelvita@gmail.com'},products:['Deluxe Room ₹800','Premium Room ₹1200','Suite ₹2000','Conference Hall','Parking'],highlights:['Free WiFi','24hr Service','Best Rating','AC Rooms','Parking Available'],viewCount:3420,searchCount:890,reviews:[{user:'R',name:'Rahul Patil',rating:5,comment:'Excellent stay! Clean rooms and great service.',date:'2025-12-10'},{user:'P',name:'Priya Sharma',rating:4,comment:'Good hotel with friendly staff.',date:'2025-11-28'}]},
+  b2:{_id:'b2',name:'Pure Veg Restaurant',category:'Food',icon:'🍛',description:'Highly-rated pure vegetarian restaurant. 4.4 rating with 621 reviews. Known for delicious thali, fresh food, and affordable pricing. Popular among locals and visitors alike.',address:{full:'Karad Road, Vita City, Sangli - 415311'},city:'vita',avgRating:4.4,reviewCount:621,isOpen:true,isVerified:false,badge:'Pure Veg',hours:'11:00 AM – 10:00 PM',contact:{phone:'02346-223344'},products:['Veg Thali ₹90','Premium Thali ₹130','Biryani ₹110','Lassi ₹30','Sweets'],highlights:['Pure Vegetarian','Affordable','Hygienic','Family Friendly'],viewCount:1860,searchCount:540,reviews:[{user:'A',name:'Amit Desai',rating:5,comment:'Best thali in town! Very hygienic and tasty.',date:'2025-12-05'},{user:'S',name:'Sunita Kulkarni',rating:4,comment:'Nice food at great price. Worth a visit.',date:'2025-11-20'}]},
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.ptab').forEach((t,i) => t.classList.toggle('active', ['info','products','reviews'][i] === tab));
+  document.querySelectorAll('.ptab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('ptab-' + tab).classList.add('active');
+}
+
+function setRating(n) {
+  selectedRating = n;
+  document.querySelectorAll('.star-btn').forEach((s,i) => s.classList.toggle('on', i < n));
+  const labels = ['','Terrible 😞','Poor 😕','Okay 😐','Good 😊','Excellent 😍'];
+  document.getElementById('ratingPreview').textContent = labels[n] || '';
+}
+
+function renderBusiness(b) {
+  BIZ = b;
+  document.title = `${b.name} — LocalExperts+`;
+  document.getElementById('breadcrumbCat').textContent = b.category;
+  document.getElementById('breadcrumbName').textContent = b.name;
+  document.getElementById('heroIcon').textContent = b.icon || '🏪';
+  document.getElementById('heroName').textContent = b.name;
+
+  // Badges
+  const badges = [];
+  if (b.category) badges.push(`<span class="h-badge h-badge-cat">${b.category}</span>`);
+  if (b.isVerified) badges.push(`<span class="h-badge h-badge-verified">✓ Verified</span>`);
+  if (b.badge) badges.push(`<span class="h-badge h-badge-gold">${b.badge}</span>`);
+  badges.push(`<span class="h-badge ${b.isOpen !== false ? 'h-badge-open' : 'h-badge-closed'}">${b.isOpen !== false ? '🟢 Open Now' : '🔴 Closed'}</span>`);
+  document.getElementById('heroBadges').innerHTML = badges.join('');
+
+  // Rating
+  const stars = '★'.repeat(Math.round(b.avgRating||0)) + '☆'.repeat(5 - Math.round(b.avgRating||0));
+  document.getElementById('heroStars').textContent = stars;
+  document.getElementById('heroRating').textContent = b.avgRating || '—';
+  document.getElementById('heroReviewCount').textContent = `(${(b.reviewCount||0).toLocaleString()} reviews)`;
+  document.getElementById('heroAddress').textContent = '📍 ' + (b.address?.full || b.city || '—');
+
+  // About
+  document.getElementById('bizDescription').textContent = b.description || '—';
+  document.getElementById('bizHours').textContent = b.hours || 'Check with business';
+
+  // Highlights
+  if (b.highlights?.length) {
+    document.getElementById('highlightsWrap').innerHTML = `<div style="margin-top:16px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">✨ Highlights</div><div class="highlight-list">${b.highlights.map(h=>`<span class="hl-item">✓ ${h}</span>`).join('')}</div></div>`;
+  }
+
+  // Products
+  if (b.products?.length) {
+    document.getElementById('productsGrid').innerHTML = b.products.map(p => `<div class="product-chip">${p}</div>`).join('');
+  }
+
+  // Contact
+  document.getElementById('cPhone').innerHTML = b.contact?.phone ? `<a href="tel:${b.contact.phone}">${b.contact.phone}</a>` : '—';
+  document.getElementById('cWa').innerHTML = b.contact?.whatsapp ? `<a href="https://wa.me/${b.contact.whatsapp}" target="_blank">+${b.contact.whatsapp}</a>` : '—';
+  document.getElementById('cEmail').innerHTML = b.contact?.email ? `<a href="mailto:${b.contact.email}">${b.contact.email}</a>` : '—';
+  document.getElementById('cWeb').innerHTML = b.contact?.website ? `<a href="${b.contact.website}" target="_blank">Visit Website ↗</a>` : '—';
+  document.getElementById('cAddr').textContent = b.address?.full || '—';
+  document.getElementById('cHours').textContent = b.hours || '—';
+  document.getElementById('cStatus').innerHTML = `<span style="color:${b.isOpen !== false ? 'var(--accent3)' : 'var(--accent2)'}">${b.isOpen !== false ? '🟢 Open' : '🔴 Closed'}</span>`;
+  document.getElementById('sViews').textContent = (b.viewCount||0).toLocaleString();
+  document.getElementById('sSearch').textContent = (b.searchCount||0).toLocaleString();
+  document.getElementById('sRating').textContent = b.avgRating || '—';
+  document.getElementById('sReviews').textContent = (b.reviewCount||0).toLocaleString();
+
+  // Reviews
+  renderReviews(b.reviews || []);
+
+  // Related (dummy)
+  renderRelated(b);
+}
+
+function renderReviews(reviews) {
+  document.getElementById('reviewSubtitle').textContent = `${reviews.length} verified customer reviews`;
+  if (!reviews.length) {
+    document.getElementById('reviewsList').innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:12px 0">No reviews yet. Be the first to review!</div>';
+    return;
+  }
+  document.getElementById('reviewsList').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="reviewer-row">
+        <div class="reviewer-left">
+          <div class="r-avatar">${r.user || r.name?.[0] || '?'}</div>
+          <div><div class="r-name">${r.name}</div><div class="r-date">${r.date ? new Date(r.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div></div>
+        </div>
+        <div class="r-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+      </div>
+      <div class="r-text">${r.comment || 'No comment.'}</div>
+    </div>
+  `).join('');
+}
+
+function renderRelated(b) {
+  const related = Object.values(DEMO_BUSINESSES).filter(x => x._id !== b._id && x.category === b.category).slice(0, 3);
+  if (!related.length) {
+    document.getElementById('relatedGrid').innerHTML = '<div style="color:var(--text-muted);font-size:13px">No related businesses found.</div>';
+    return;
+  }
+  document.getElementById('relatedGrid').innerHTML = related.map(r => `
+    <div class="related-card" onclick="window.location.href='business-profile.html?id=${r._id}'">
+      <div class="rc-icon">${r.icon}</div>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-meta">⭐ ${r.avgRating} · ${r.city}</div>
+    </div>
+  `).join('');
+}
+
+async function loadBusiness() {
+  // Remove loader if exists
+  const removeLoader = () => document.getElementById('profileLoader')?.remove();
+
+  // If no bizId — load first available business from API
+  if (!bizId) {
+    try {
+      const res = await fetch(`http://localhost:5000/api/businesses?limit=1`, { signal: AbortSignal.timeout(4000) });
+      const data = await res.json();
+      if (data.success && (data.data || data.businesses)?.length) {
+        renderBusiness((data.data || data.businesses)[0]);
+        removeLoader();
+        return;
+      }
+    } catch(e) {}
+    // Fallback to demo only if API fails
+    renderBusiness(DEMO_BUSINESSES['b1']);
+    removeLoader();
+    return;
+  }
+
+  // Check demo businesses
+  if (DEMO_BUSINESSES[bizId]) {
+    renderBusiness(DEMO_BUSINESSES[bizId]);
+    removeLoader();
+    return;
+  }
+
+  // Fetch specific business from API
+  try {
+    const res = await fetch(`http://localhost:5000/api/businesses/${bizId}`, { signal: AbortSignal.timeout(5000) });
+    const data = await res.json();
+    if (data.success && (data.data || data.business)) {
+      renderBusiness(data.data || data.business);
+      removeLoader();
+      // Load related businesses from API
+      loadRelatedBusinesses(data.data || data.business);
+    } else {
+      showNotFound();
+    }
+  } catch(e) {
+    showNotFound('Backend offline. Please start the server and try again.');
+  }
+}
+
+async function loadRelatedBusinesses(b) {
+  try {
+    const city = b.city || '';
+    const cat  = b.category || '';
+    const id   = b._id || b.id || '';
+    const res  = await fetch(`http://localhost:5000/api/businesses?city=${city}&category=${cat}&limit=6`, { signal: AbortSignal.timeout(3000) });
+    const data = await res.json();
+    if (data.success) {
+      const related = (data.data || data.businesses || []).filter(x => (x._id||x.id) !== id).slice(0,3);
+      if (related.length) {
+        document.getElementById('relatedGrid').innerHTML = related.map(r => `
+          <div class="related-card" onclick="window.location.href='business-profile.html?id=${r._id||r.id}'">
+            <div class="rc-icon">${r.icon||'🏪'}</div>
+            <div class="rc-name">${r.name}</div>
+            <div class="rc-meta">⭐ ${r.avgRating||'—'} · ${r.city}</div>
+          </div>`).join('');
+      }
+    }
+  } catch(e) {}
+}
+
+function showNotFound(msg) {
+  document.body.innerHTML = `<div style="text-align:center;padding:80px 20px;font-family:sans-serif">
+    <div style="font-size:48px;margin-bottom:16px">😕</div>
+    <h2>Business Not Found</h2>
+    <p style="color:#888;margin-bottom:24px">${msg || 'This business may have been removed.'}</p>
+    <a href="../index.html" style="padding:12px 28px;background:#6c63ff;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">← Back to LocalExperts+</a>
+  </div>`;
+}
+
+function callBusiness() {
+  const p = BIZ?.contact?.phone;
+  if (p) window.open(`tel:${p}`);
+  else showToast('No phone number listed');
+}
+function whatsappBusiness() {
+  const w = BIZ?.contact?.whatsapp;
+  if (w) window.open(`https://wa.me/${w}`,'_blank');
+  else showToast('No WhatsApp number listed');
+}
+function saveToFavourites() { showToast('🔖 Saved to favourites!'); }
+function shareProfile() { copyLink(); }
+function copyLink() {
+  navigator.clipboard?.writeText(location.href);
+  showToast('🔗 Link copied to clipboard!');
+}
+function shareWhatsApp() { window.open(`https://wa.me/?text=Check out ${BIZ?.name} on LocalExperts+! ${location.href}`,'_blank'); }
+function shareTwitter() { window.open(`https://twitter.com/intent/tweet?text=Check out ${BIZ?.name} on LocalExperts%2B!&url=${location.href}`,'_blank'); }
+
+function submitReview() {
+  const name = document.getElementById('reviewerName').value.trim();
+  const text = document.getElementById('reviewText').value.trim();
+  if (!selectedRating) { showToast('Please select a star rating'); return; }
+  if (!name) { showToast('Please enter your name'); return; }
+  if (!text || text.length < 10) { showToast('Please write at least 10 characters'); return; }
+
+  // Add to local reviews list
+  const newReview = { user:name[0].toUpperCase(), name, rating:selectedRating, comment:text, date:new Date().toISOString() };
+  if (BIZ) { BIZ.reviews = BIZ.reviews || []; BIZ.reviews.unshift(newReview); renderReviews(BIZ.reviews); }
+  document.getElementById('reviewerName').value = '';
+  document.getElementById('reviewText').value = '';
+  setRating(0); selectedRating = 0;
+  document.getElementById('ratingPreview').textContent = 'Select a star rating above';
+  showToast('✅ Review submitted! Thank you.');
+}
+
+// Check auth
+const user = localStorage.getItem('le_user');
+if (user) {
+  document.getElementById('navLoginBtn').outerHTML = '<a href="/pages/business-dashboard.html" class="btn-nav">📊 Dashboard</a>';
+}
+
+loadBusiness();
+</script>
+</body>
+</html>

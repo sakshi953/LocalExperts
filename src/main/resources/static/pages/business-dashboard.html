@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Business Dashboard — LocalExperts+</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;
+  --accent:#6c63ff;--accent2:#ff6584;--accent3:#43e97b;
+  --text:#f0f0f8;--text-muted:#8888aa;--text-dim:#555570;
+  --card-bg:#161622;--glow:rgba(108,99,255,0.25);--radius:16px;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;backdrop-filter:blur(24px);background:rgba(10,10,15,0.95);border-bottom:1px solid var(--border);padding:0 24px;height:62px;display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-logo span{color:var(--accent)}
+.nav-badge{background:rgba(108,99,255,0.15);color:var(--accent);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;border:1px solid rgba(108,99,255,0.3)}
+.nav-sep{width:1px;height:22px;background:var(--border);margin:0 8px}
+.nav-section{font-size:13px;color:var(--text-muted);font-weight:500}
+.nav-right{display:flex;gap:8px;align-items:center;margin-left:auto}
+.btn-nav{background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:10px;font-family:var(--font-body);font-weight:500;cursor:pointer;font-size:13px;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-nav:hover{opacity:.85}
+.btn-nav-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:7px 14px;border-radius:10px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-nav-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;border:2px solid var(--border)}
+
+/* SIDEBAR + MAIN LAYOUT */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 62px);margin-top:62px}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.sidebar-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:12px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text-muted);transition:all .2s;text-decoration:none;border:none;background:none;width:100%;font-family:var(--font-body)}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(108,99,255,0.12);color:var(--accent);border:1px solid rgba(108,99,255,0.2)}
+.nav-item .n-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-item .n-badge{margin-left:auto;background:var(--accent2);color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700}
+.sidebar-bottom{margin-top:auto;padding-top:16px;border-top:1px solid var(--border)}
+
+/* MAIN CONTENT */
+.main{padding:32px;overflow-y:auto}
+.tab-page{display:none}
+.tab-page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:28px}
+.page-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+.page-title{font-family:var(--font-head);font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.page-sub{color:var(--text-muted);font-size:14px}
+.page-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* STATS GRID */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px 20px;transition:border-color .2s}
+.stat-card:hover{border-color:rgba(108,99,255,0.3)}
+.stat-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stat-icon{font-size:20px}
+.stat-trend{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:600}
+.trend-up{background:rgba(67,233,123,0.12);color:var(--accent3)}
+.trend-down{background:rgba(255,101,132,0.12);color:var(--accent2)}
+.stat-val{font-family:var(--font-head);font-size:26px;font-weight:800;margin-bottom:4px}
+.stat-lbl{font-size:12px;color:var(--text-muted)}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.chart-box{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:22px}
+.chart-title{font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:4px}
+.chart-sub{font-size:12px;color:var(--text-muted);margin-bottom:18px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar-lbl{font-size:12px;width:80px;flex-shrink:0;color:var(--text-muted);text-align:right}
+.bar-track{flex:1;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s .2s ease}
+.bar-val{font-size:12px;color:var(--text-muted);width:40px;flex-shrink:0}
+.pie-legend{display:flex;flex-direction:column;gap:8px}
+.pie-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.pie-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.pie-lbl{flex:1;color:var(--text-muted)}
+.pie-pct{font-weight:600}
+
+/* BUSINESS CARDS */
+.biz-list{display:flex;flex-direction:column;gap:12px}
+.biz-row{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;transition:border-color .2s}
+.biz-row:hover{border-color:rgba(108,99,255,0.35)}
+.biz-icon{font-size:32px;width:52px;height:52px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.biz-info{flex:1}
+.biz-name{font-size:15px;font-weight:700;margin-bottom:3px}
+.biz-meta{font-size:12px;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap}
+.biz-meta span{display:flex;align-items:center;gap:4px}
+.status-chip{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700}
+.status-active{background:rgba(67,233,123,0.12);color:var(--accent3);border:1px solid rgba(67,233,123,0.25)}
+.status-pending{background:rgba(255,165,0,0.12);color:#f5a623;border:1px solid rgba(255,165,0,0.25)}
+.status-rejected{background:rgba(255,101,132,0.12);color:var(--accent2);border:1px solid rgba(255,101,132,0.25)}
+.biz-actions{display:flex;gap:8px;flex-shrink:0}
+.btn-sm{padding:6px 12px;border-radius:8px;font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:var(--surface2);color:var(--text);display:inline-flex;align-items:center;gap:4px}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm-danger{border-color:rgba(255,101,132,0.3);color:var(--accent2)}
+.btn-sm-danger:hover{border-color:var(--accent2);background:rgba(255,101,132,0.08)}
+.btn-sm-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-sm-primary:hover{opacity:.85}
+
+/* REVIEW CARDS */
+.review-list{display:flex;flex-direction:column;gap:10px}
+.review-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.reviewer-info{display:flex;align-items:center;gap:10px}
+.reviewer-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.reviewer-name{font-size:14px;font-weight:600}
+.reviewer-date{font-size:11px;color:var(--text-dim)}
+.stars{color:#f5a623;font-size:14px;letter-spacing:1px}
+.review-text{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:10px}
+.review-biz{font-size:11px;color:var(--accent);background:rgba(108,99,255,0.1);padding:2px 8px;border-radius:6px;width:fit-content}
+.reply-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:10px}
+.reply-label{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px}
+.reply-text{font-size:13px;color:var(--text-muted);line-height:1.5}
+.reply-form{display:none;margin-top:10px}
+.reply-form textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;min-height:60px;resize:vertical}
+.reply-form textarea:focus{border-color:var(--accent)}
+
+/* FORM */
+.form-section{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:28px}
+.form-section + .form-section{margin-top:16px}
+.section-title{font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--text-muted);margin-bottom:20px}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:500;margin-bottom:7px;color:var(--text)}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:all .2s}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.1)}
+.form-input::placeholder{color:var(--text-dim)}
+.form-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238888aa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-select option{background:var(--surface)}
+
+/* NOTIFICATIONS */
+.notif-list{display:flex;flex-direction:column;gap:8px}
+.notif-item{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;transition:border-color .2s}
+.notif-item:hover{border-color:rgba(108,99,255,0.3)}
+.notif-item.unread{border-left:3px solid var(--accent)}
+.notif-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.notif-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.notif-sub{font-size:12px;color:var(--text-muted)}
+.notif-time{font-size:11px;color:var(--text-dim);margin-top:6px}
+
+/* PROFILE */
+.profile-hero{background:linear-gradient(135deg,rgba(108,99,255,0.15),rgba(255,101,132,0.08));border:1px solid var(--border);border-radius:16px;padding:32px;display:flex;align-items:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}
+.profile-avatar-big{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;border:3px solid rgba(108,99,255,0.3);flex-shrink:0}
+.profile-name{font-family:var(--font-head);font-size:22px;font-weight:800;margin-bottom:4px}
+.profile-email{font-size:14px;color:var(--text-muted);margin-bottom:8px}
+.profile-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid}
+.chip-role{background:rgba(108,99,255,0.12);color:var(--accent);border-color:rgba(108,99,255,0.3)}
+.chip-city{background:rgba(67,233,123,0.1);color:var(--accent3);border-color:rgba(67,233,123,0.25)}
+.chip-verified{background:rgba(245,166,35,0.1);color:#f5a623;border-color:rgba(245,166,35,0.25)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(67,233,123,0.3);color:var(--accent3)}
+.toast.error{border-color:rgba(255,101,132,0.3);color:var(--accent2)}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;place-items:center;backdrop-filter:blur(12px)}
+.overlay.on{display:grid}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;max-width:580px;width:94%;max-height:88vh;overflow-y:auto;position:relative;animation:mIn .3s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.m-close{position:absolute;top:14px;right:14px;background:var(--surface2);border:none;color:var(--text-muted);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;z-index:1}
+.m-close:hover{color:var(--text)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .charts-row{grid-template-columns:1fr}
+  .form-grid-2{grid-template-columns:1fr}
+  .main{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">Local<span>Experts</span><span class="nav-badge">+</span></a>
+  <div class="nav-sep"></div>
+  <span class="nav-section">Business Dashboard</span>
+  <div class="nav-right">
+    <a href="/" class="btn-nav-ghost">🏠 Browse</a>
+    <div class="avatar" id="navAvatar" title="">?</div>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Overview</div>
+    <button class="nav-item active" onclick="showTab('overview')"><span class="n-icon">📊</span> Dashboard</button>
+    <button class="nav-item" onclick="showTab('businesses')"><span class="n-icon">🏪</span> My Businesses</button>
+    <button class="nav-item" onclick="showTab('reviews')"><span class="n-icon">⭐</span> Reviews <span class="n-badge" id="reviewBadge">0</span></button>
+    
+    <div class="sidebar-label">Manage</div>
+    <button class="nav-item" onclick="showTab('add-business')"><span class="n-icon">➕</span> Add Business</button>
+    <button class="nav-item" onclick="showTab('notifications')"><span class="n-icon">🔔</span> Notifications <span class="n-badge" style="background:var(--accent)">3</span></button>
+    
+    <div class="sidebar-label">Account</div>
+    <button class="nav-item" onclick="showTab('profile')"><span class="n-icon">👤</span> My Profile</button>
+    <button class="nav-item" onclick="showTab('saved')"><span class="n-icon">🔖</span> Saved Places</button>
+    <button class="nav-item" onclick="showTab('settings')"><span class="n-icon">⚙️</span> Settings</button>
+
+    <div class="sidebar-bottom">
+      <button class="nav-item" onclick="handleLogout()" style="color:var(--accent2)"><span class="n-icon">🚪</span> Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-page active" id="tab-overview">
+      <div class="page-header">
+        <div class="page-eyebrow">Dashboard</div>
+        <h1 class="page-title">Welcome back, <span id="welcomeName">Business Owner</span> 👋</h1>
+        <p class="page-sub">Here's how your business is performing today.</p>
+      </div>
+
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-icon">👁️</span><span class="stat-trend trend-up">+12%</span></div><div class="stat-val" id="statViews">0</div><div class="stat-lbl">Profile Views</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-icon">🔍</span><span class="stat-trend trend-up">+8%</span></div><div class="stat-val" id="statSearches">0</div><div class="stat-lbl">Search Appearances</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-icon">⭐</span><span class="stat-trend trend-up">+3</span></div><div class="stat-val" id="statRating">0.0</div><div class="stat-lbl">Avg. Rating</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-icon">💬</span><span class="stat-trend trend-up">+5</span></div><div class="stat-val" id="statReviews">0</div><div class="stat-lbl">Total Reviews</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-icon">🏪</span></div><div class="stat-val" id="statBiz">0</div><div class="stat-lbl">Businesses Listed</div></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <div class="chart-title">Weekly Views</div>
+          <div class="chart-sub">Profile visits over the last 7 days</div>
+          <div id="weekChart">
+            <div class="bar-row"><div class="bar-lbl">Mon</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)"></div></div><div class="bar-val">48</div></div>
+            <div class="bar-row"><div class="bar-lbl">Tue</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--accent)"></div></div><div class="bar-val">36</div></div>
+            <div class="bar-row"><div class="bar-lbl">Wed</div><div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--accent)"></div></div><div class="bar-val">60</div></div>
+            <div class="bar-row"><div class="bar-lbl">Thu</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--accent)"></div></div><div class="bar-val">44</div></div>
+            <div class="bar-row"><div class="bar-lbl">Fri</div><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--accent2)"></div></div><div class="bar-val">72</div></div>
+            <div class="bar-row"><div class="bar-lbl">Sat</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent2)"></div></div><div class="bar-val">80</div></div>
+            <div class="bar-row"><div class="bar-lbl">Sun</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--accent)"></div></div><div class="bar-val">56</div></div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Review Breakdown</div>
+          <div class="chart-sub">Rating distribution</div>
+          <div class="pie-legend">
+            <div class="pie-item"><div class="pie-dot" style="background:var(--accent3)"></div><div class="pie-lbl">5 Stars</div><div class="pie-pct">52%</div></div>
+            <div class="pie-item"><div class="pie-dot" style="background:#43b8e9"></div><div class="pie-lbl">4 Stars</div><div class="pie-pct">28%</div></div>
+            <div class="pie-item"><div class="pie-dot" style="background:#f5a623"></div><div class="pie-lbl">3 Stars</div><div class="pie-pct">12%</div></div>
+            <div class="pie-item"><div class="pie-dot" style="background:var(--accent2)"></div><div class="pie-lbl">1-2 Stars</div><div class="pie-pct">8%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--card-bg);border:1px solid rgba(108,99,255,0.25);border-radius:14px;padding:22px">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:12px">💡 Quick Tips to Grow</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
+          <div style="background:var(--surface2);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted)">📸 <strong style="color:var(--text)">Add photos</strong> — Listings with images get 3× more views</div>
+          <div style="background:var(--surface2);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted)">💬 <strong style="color:var(--text)">Reply to reviews</strong> — Shows customers you care about feedback</div>
+          <div style="background:var(--surface2);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted)">⏰ <strong style="color:var(--text)">Update hours</strong> — Accurate hours boost customer trust by 40%</div>
+          <div style="background:var(--surface2);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted)">🏷️ <strong style="color:var(--text)">Add products/services</strong> — Helps customers know what you offer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY BUSINESSES TAB -->
+    <div class="tab-page" id="tab-businesses">
+      <div class="page-header">
+        <div class="page-eyebrow">My Listings</div>
+        <h1 class="page-title">My Businesses</h1>
+        <p class="page-sub">Manage all your business listings from here.</p>
+        <div class="page-actions">
+          <button class="btn-nav" onclick="showTab('add-business')">➕ Add New Business</button>
+        </div>
+      </div>
+      <div class="biz-list" id="myBizList">
+        <!-- populated by JS -->
+        <div style="color:var(--text-muted);font-size:14px;padding:40px;text-align:center">
+          <div style="font-size:40px;margin-bottom:12px">🏪</div>
+          <div>You haven't listed any businesses yet.</div>
+          <div style="margin-top:12px"><button class="btn-nav" onclick="showTab('add-business')">Add Your First Business →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div class="tab-page" id="tab-reviews">
+      <div class="page-header">
+        <div class="page-eyebrow">Customer Feedback</div>
+        <h1 class="page-title">Reviews</h1>
+        <p class="page-sub">Read and respond to customer reviews for your businesses.</p>
+      </div>
+      <div class="review-list" id="reviewList">
+        <!-- Sample reviews -->
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">R</div>
+              <div><div class="reviewer-name">Rahul Patil</div><div class="reviewer-date">3 days ago</div></div>
+            </div>
+            <div class="stars">★★★★★</div>
+          </div>
+          <div class="review-biz">Hotel Vita Mayni</div>
+          <div class="review-text" style="margin-top:8px">Excellent stay! The rooms were clean and the staff were very friendly. Will definitely come back again.</div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn-sm" onclick="toggleReplyForm(this)">💬 Reply</button>
+            <button class="btn-sm">🚩 Report</button>
+          </div>
+          <div class="reply-form">
+            <textarea placeholder="Write a reply to this review…"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn-sm btn-sm-primary" onclick="submitReply(this)">Post Reply</button>
+              <button class="btn-sm" onclick="toggleReplyForm(this.closest('.review-card').querySelector('.reply-form'))">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar" style="background:linear-gradient(135deg,#43e97b,#00b09b)">P</div>
+              <div><div class="reviewer-name">Priya Sharma</div><div class="reviewer-date">1 week ago</div></div>
+            </div>
+            <div class="stars">★★★★☆</div>
+          </div>
+          <div class="review-biz">Pure Veg Restaurant</div>
+          <div class="review-text" style="margin-top:8px">Food was delicious! The thali was filling and affordable. Service could be a bit faster but overall great experience.</div>
+          <div class="reply-box">
+            <div class="reply-label">Your Reply</div>
+            <div class="reply-text">Thank you Priya! We're glad you enjoyed the food. We're working on improving our service speed. Hope to see you again! 🙏</div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar" style="background:linear-gradient(135deg,#f5a623,#ff6584)">A</div>
+              <div><div class="reviewer-name">Amit Desai</div><div class="reviewer-date">2 weeks ago</div></div>
+            </div>
+            <div class="stars">★★★☆☆</div>
+          </div>
+          <div class="review-biz">Hotel Vita Mayni</div>
+          <div class="review-text" style="margin-top:8px">Decent place to stay. The room was okay but AC wasn't working properly. Front desk resolved it after 30 minutes.</div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn-sm" onclick="toggleReplyForm(this)">💬 Reply</button>
+            <button class="btn-sm">🚩 Report</button>
+          </div>
+          <div class="reply-form">
+            <textarea placeholder="Write a reply…"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn-sm btn-sm-primary" onclick="submitReply(this)">Post Reply</button>
+              <button class="btn-sm" onclick="cancelReply(this)">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD BUSINESS TAB -->
+    <div class="tab-page" id="tab-add-business">
+      <div class="page-header">
+        <div class="page-eyebrow">List a Business</div>
+        <h1 class="page-title">Register a New Business</h1>
+        <p class="page-sub">Fill in the details below. Your listing will be reviewed and activated within 24 hours.</p>
+      </div>
+
+      <form onsubmit="handleAddBusiness(event)">
+        <div class="form-section">
+          <div class="section-title">Basic Information</div>
+          <div class="section-sub">Core details about your business</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Business Name *</label>
+              <input class="form-input" id="newBizName" placeholder="e.g. Patil Electronics"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select class="form-select" id="newBizCat">
+                <option value="">Select category…</option>
+                <option>Hotels</option><option>Food</option><option>Healthcare</option>
+                <option>Grocery</option><option>Education</option><option>Services</option>
+                <option>Electronics</option><option>Fashion</option><option>Finance</option>
+                <option>Transport</option><option>Entertainment</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea class="form-input" id="newBizDesc" style="min-height:90px;resize:vertical" placeholder="Describe your business, products, and what makes you unique…"></textarea>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Icon / Emoji</label>
+              <input class="form-input" id="newBizIcon" placeholder="🏪" style="font-size:20px"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Badge</label>
+              <input class="form-input" id="newBizBadge" placeholder="e.g. Top Rated ⭐"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">Location & Contact</div>
+          <div class="section-sub">How customers can find and reach you</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">City *</label>
+              <select class="form-select" id="newBizCity">
+                <option value="">Select city…</option>
+                <option value="vita">Vita</option><option value="pune">Pune</option>
+                <option value="mumbai">Mumbai</option><option value="nashik">Nashik</option>
+                <option value="kolhapur">Kolhapur</option><option value="sangli">Sangli</option>
+                <option value="solapur">Solapur</option><option value="aurangabad">Aurangabad</option>
+                <option value="nagpur">Nagpur</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">PIN Code</label>
+              <input class="form-input" id="newBizPin" placeholder="415311"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Address</label>
+            <input class="form-input" id="newBizAddr" placeholder="Shop No. 12, Main Road, Area Name"/>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input class="form-input" id="newBizPhone" type="tel" placeholder="9876543210"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp Number</label>
+              <input class="form-input" id="newBizWa" type="tel" placeholder="9876543210"/>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input class="form-input" id="newBizEmail" type="email" placeholder="business@email.com"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Website (optional)</label>
+              <input class="form-input" id="newBizWeb" placeholder="https://yourbusiness.com"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">🟢 GST Details</div>
+          <div class="section-sub">Required for admin verification and business listing</div>
+          <div class="form-group">
+            <label class="form-label">GSTIN (GST Number) <span style="color:var(--accent2)">*</span></label>
+            <input class="form-input" id="newBizGstin" placeholder="e.g. 27AAPFU0939F1ZV" maxlength="15" oninput="this.value=this.value.toUpperCase()" style="letter-spacing:2px;font-weight:600;font-size:15px"/>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">🔒 15-digit GST Identification Number — required for admin to verify and approve your business.</div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">Operations</div>
+          <div class="section-sub">Business hours and product/service details</div>
+          <div class="form-group">
+            <label class="form-label">Working Hours</label>
+            <input class="form-input" id="newBizHours" placeholder="Mon–Sat: 9:00 AM – 9:00 PM, Sun: Closed"/>
+          </div>
+
+          <!-- PRICE LIST TABLE -->
+          <div class="form-group">
+            <label class="form-label">Products / Services with Prices</label>
+            <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden">
+              <table style="width:100%;border-collapse:collapse" id="priceTable">
+                <thead>
+                  <tr style="background:var(--surface2)">
+                    <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600">Product / Service Name</th>
+                    <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;width:130px">Price (₹)</th>
+                    <th style="padding:10px 14px;width:40px"></th>
+                  </tr>
+                </thead>
+                <tbody id="priceTableBody">
+                  <tr class="price-row">
+                    <td style="padding:8px 10px"><input class="form-input price-name" placeholder="e.g. TV Repair" style="margin:0"/></td>
+                    <td style="padding:8px 10px"><input class="form-input price-amt" type="number" min="0" placeholder="500" style="margin:0"/></td>
+                    <td style="padding:8px 10px;text-align:center"><button type="button" onclick="removePriceRow(this)" style="background:rgba(255,101,132,0.1);border:none;color:#ff6584;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px">✕</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button type="button" onclick="addPriceRow()" style="margin-top:8px;background:none;border:1px dashed var(--border);border-radius:8px;padding:7px 16px;cursor:pointer;font-size:13px;color:var(--text-muted);width:100%">+ Add Item</button>
+            <input type="hidden" id="newBizProducts"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Highlights (comma-separated)</label>
+            <input class="form-input" id="newBizHighlights" placeholder="Free WiFi, Home Delivery, AC Seating"/>
+          </div>
+        </div>
+
+        <!-- LOCATION SECTION -->
+        <div class="form-section">
+          <div class="section-title">📍 Business Location</div>
+          <div class="section-sub">Choose how to set your business location</div>
+          <div class="form-group">
+            <!-- Toggle -->
+            <div style="display:flex;gap:10px;margin-bottom:14px;">
+              <label id="bizLocOptDetect" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border-radius:10px;border:2px solid var(--accent);background:rgba(108,99,255,0.08);flex:1;font-size:13px;font-weight:600">
+                <input type="radio" name="bizLocMethod" value="detect" checked onchange="toggleBizLocMethod('detect')" style="accent-color:var(--accent);width:15px;height:15px"/>
+                📍 Auto Detect
+              </label>
+              <label id="bizLocOptManual" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);flex:1;font-size:13px;font-weight:600">
+                <input type="radio" name="bizLocMethod" value="manual" onchange="toggleBizLocMethod('manual')" style="accent-color:var(--accent);width:15px;height:15px"/>
+                ✏️ Enter Address
+              </label>
+            </div>
+            <!-- Auto detect -->
+            <div id="bizLocDetectDiv">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input class="form-input" id="newBizLocationInput" placeholder="Click 'Detect' to get your business location" readonly style="flex:1;background:var(--surface2);cursor:default;"/>
+                <button type="button" onclick="detectNewBizLocation()" id="newBizLocBtn" style="padding:0 16px;height:44px;background:#28a745;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;white-space:nowrap;font-size:13px;">📍 Detect</button>
+              </div>
+              <div id="newBizLocMsg" style="font-size:12px;margin-top:6px;color:var(--text-dim);"></div>
+            </div>
+            <!-- Manual address -->
+            <div id="bizLocManualDiv" style="display:none;">
+              <input class="form-input" id="newBizLocationManual" placeholder="Enter full business address (e.g. Shop 5, Main Road, Vita, Sangli 415311)"/>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">📍 Enter your complete address with city and PIN code.</div>
+            </div>
+            <input type="hidden" id="newBizLat"/>
+            <input type="hidden" id="newBizLng"/>
+          </div>
+        </div>
+
+        <!-- OTP VERIFICATION SECTION -->
+        <div class="form-section">
+          <div class="section-title">📧 Business Email Verification</div>
+          <div class="section-sub">Verify your business email with a one-time password</div>
+          <div class="form-group">
+            <label class="form-label">Business Email for OTP</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="form-input" id="newBizOtpEmail" type="email" placeholder="Enter business email to verify" style="flex:1;"/>
+              <button type="button" onclick="sendNewBizOtp()" id="sendNewBizOtpBtn" style="padding:0 16px;height:44px;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;white-space:nowrap;font-size:13px;">Send OTP</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Enter 6-digit OTP</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="form-input" id="newBizOtpInput" type="text" maxlength="6" placeholder="• • • • • •" style="flex:1;letter-spacing:6px;font-size:20px;font-weight:700;text-align:center;"/>
+              <button type="button" onclick="verifyNewBizOtp()" id="verifyNewBizOtpBtn" style="padding:0 16px;height:44px;background:#17a2b8;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;white-space:nowrap;font-size:13px;">Verify ✓</button>
+            </div>
+            <div id="newBizOtpMsg" style="font-size:12px;margin-top:6px;color:var(--text-dim);"></div>
+          </div>
+        </div>
+
+        <div class="form-error" id="addBizError" style="display:none;margin-bottom:12px;padding:10px 14px;background:rgba(255,101,132,0.08);border:1px solid rgba(255,101,132,0.2);border-radius:10px;color:var(--accent2);font-size:13px"></div>
+        <button type="submit" id="addBizSubmitBtn" class="btn-nav" style="padding:13px 28px;font-size:14px">🚀 Submit Business</button>
+      </form>
+    </div>
+
+    <!-- NOTIFICATIONS TAB -->
+    <div class="tab-page" id="tab-notifications">
+      <div class="page-header">
+        <div class="page-eyebrow">Alerts</div>
+        <h1 class="page-title">Notifications</h1>
+        <p class="page-sub">Stay updated on your business activity.</p>
+      </div>
+      <div class="notif-list">
+        <div class="notif-item unread">
+          <div class="notif-icon">⭐</div>
+          <div><div class="notif-title">New 5-star review received</div><div class="notif-sub">Rahul Patil left a 5-star review on <strong>Hotel Vita Mayni</strong></div><div class="notif-time">3 days ago</div></div>
+        </div>
+        <div class="notif-item unread">
+          <div class="notif-icon">✅</div>
+          <div><div class="notif-title">Business Verified!</div><div class="notif-sub">Your listing <strong>Pure Veg Restaurant</strong> has been verified and is now live.</div><div class="notif-time">1 week ago</div></div>
+        </div>
+        <div class="notif-item unread">
+          <div class="notif-icon">👁️</div>
+          <div><div class="notif-title">Milestone: 1,000 views!</div><div class="notif-sub">Your business has reached 1,000 profile views this month. Keep it up!</div><div class="notif-time">2 weeks ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-icon">💬</div>
+          <div><div class="notif-title">New review on Pure Veg Restaurant</div><div class="notif-sub">Priya Sharma gave you 4 stars. Don't forget to reply!</div><div class="notif-time">1 week ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-icon">📣</div>
+          <div><div class="notif-title">Tip: Add photos to boost views</div><div class="notif-sub">Listings with photos get 3× more views. Upload images now to attract more customers.</div><div class="notif-time">3 weeks ago</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="tab-page" id="tab-profile">
+      <div class="page-header">
+        <div class="page-eyebrow">Account</div>
+        <h1 class="page-title">My Profile</h1>
+        <p class="page-sub">Manage your personal account information.</p>
+      </div>
+      <div class="profile-hero">
+        <div class="profile-avatar-big" id="profileAvatar">?</div>
+        <div>
+          <div class="profile-name" id="profileName">Loading…</div>
+          <div class="profile-email" id="profileEmail">—</div>
+          <div class="profile-chips">
+            <span class="chip chip-role" id="profileRole">User</span>
+            <span class="chip chip-city" id="profileCity">City</span>
+            <span class="chip chip-verified">✓ Member</span>
+          </div>
+        </div>
+        <div style="margin-left:auto">
+          <button class="btn-nav-ghost" onclick="showTab('settings')">⚙️ Edit Profile</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+        <div class="stat-card"><div class="stat-val" id="profileBizCount">0</div><div class="stat-lbl">Businesses Listed</div></div>
+        <div class="stat-card"><div class="stat-val" id="profileRevCount">3</div><div class="stat-lbl">Reviews Given</div></div>
+        <div class="stat-card"><div class="stat-val" id="profileSavedCount">0</div><div class="stat-lbl">Saved Places</div></div>
+        <div class="stat-card"><div class="stat-val">—</div><div class="stat-lbl">Member Since</div></div>
+      </div>
+    </div>
+
+    <!-- SAVED PLACES TAB -->
+    <div class="tab-page" id="tab-saved">
+      <div class="page-header">
+        <div class="page-eyebrow">Bookmarks</div>
+        <h1 class="page-title">Saved Places</h1>
+        <p class="page-sub">Businesses you've bookmarked for later.</p>
+      </div>
+      <div style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+        <div style="font-size:44px;margin-bottom:14px">🔖</div>
+        <div style="font-size:15px;margin-bottom:8px">No saved places yet</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Browse businesses and tap 🔖 to save them here</div>
+        <a href="/" class="btn-nav">Explore Businesses →</a>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-page" id="tab-settings">
+      <div class="page-header">
+        <div class="page-eyebrow">Preferences</div>
+        <h1 class="page-title">Settings</h1>
+        <p class="page-sub">Update your profile and notification preferences.</p>
+      </div>
+      <div class="form-section">
+        <div class="section-title">Personal Information</div>
+        <div class="section-sub">Update your name and city</div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" id="settingsName" placeholder="Your name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <select class="form-select" id="settingsCity">
+              <option value="vita">Vita</option><option value="pune">Pune</option>
+              <option value="mumbai">Mumbai</option><option value="nashik">Nashik</option>
+              <option value="kolhapur">Kolhapur</option><option value="sangli">Sangli</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" id="settingsPhone" placeholder="9876543210"/>
+        </div>
+        <button class="btn-nav" onclick="saveSettings()">Save Changes</button>
+      </div>
+      <div class="form-section" style="margin-top:16px">
+        <div class="section-title">Notification Preferences</div>
+        <div class="section-sub">Choose what updates you receive</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-size:14px">
+            <input type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px"/> New reviews on my business
+          </label>
+          <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-size:14px">
+            <input type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px"/> Business verification status updates
+          </label>
+          <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-size:14px">
+            <input type="checkbox" style="accent-color:var(--accent);width:16px;height:16px"/> Weekly analytics report
+          </label>
+          <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-size:14px">
+            <input type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px"/> Platform tips and announcements
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000/api';
+let currentUser = null;
+let myBusinesses = [];
+let authToken = localStorage.getItem('le_token');
+
+function showTab(name) {
+  document.querySelectorAll('.tab-page').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function toggleReplyForm(btn) {
+  const card = btn.closest ? btn.closest('.review-card') : btn;
+  const form = card ? card.querySelector('.reply-form') : btn;
+  if (form) form.style.display = form.style.display === 'block' ? 'none' : 'block';
+}
+
+function cancelReply(btn) {
+  btn.closest('.reply-form').style.display = 'none';
+}
+
+function submitReply(btn) {
+  const form = btn.closest('.reply-form');
+  const text = form.querySelector('textarea').value.trim();
+  if (!text) { showToast('Please write a reply first', 'error'); return; }
+  form.innerHTML = `<div class="reply-box"><div class="reply-label">Your Reply</div><div class="reply-text">${text}</div></div>`;
+  showToast('✅ Reply posted successfully!');
+}
+
+async function loadUserData() {
+  const stored = localStorage.getItem('le_user');
+  if (stored) {
+    currentUser = JSON.parse(stored);
+  } else if (authToken) {
+    try {
+      const res = await fetch(`${API}/auth/me`, { headers: {'Authorization':`Bearer ${authToken}`}, signal: AbortSignal.timeout(3000) });
+      const data = await res.json();
+      if (data.success) currentUser = data.user;
+    } catch(e) {}
+  }
+
+  if (!currentUser) {
+    window.location.href = '/pages/login.html';
+    return;
+  }
+
+  // Update UI with user info
+  const initials = currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('navAvatar').textContent = initials;
+  document.getElementById('navAvatar').title = currentUser.name;
+  document.getElementById('welcomeName').textContent = currentUser.name.split(' ')[0];
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileName').textContent = currentUser.name;
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('profileRole').textContent = currentUser.role === 'business_owner' ? '🏪 Business Owner' : currentUser.role === 'admin' ? '⚙️ Admin' : '👤 Customer';
+  document.getElementById('profileCity').textContent = '📍 ' + (currentUser.city || 'N/A');
+  document.getElementById('settingsName').value = currentUser.name;
+  document.getElementById('settingsCity').value = currentUser.city || 'vita';
+
+  await loadMyBusinesses();
+}
+
+async function loadMyBusinesses() {
+  myBusinesses = []; // Reset first to prevent duplicates
+  // Try API - use /mine endpoint to get owner's businesses
+  if (authToken) {
+    try {
+      const res = await fetch(`${API}/businesses/mine`, { headers:{'Authorization':`Bearer ${authToken}`}, signal: AbortSignal.timeout(4000) });
+      const data = await res.json();
+      if (data.success) myBusinesses = data.businesses || [];
+    } catch(e) {}
+  }
+  // NOTE: Demo data removed — only show real businesses from API
+
+  // Update stats
+  const totalViews   = myBusinesses.reduce((a,b) => a+(b.viewCount||0), 0);
+  const totalSearch  = myBusinesses.reduce((a,b) => a+(b.searchCount||0), 0);
+  const totalReviews = myBusinesses.reduce((a,b) => a+(b.reviewCount||0), 0);
+  const avgRating    = myBusinesses.length ? (myBusinesses.reduce((a,b)=>a+(b.avgRating||0),0)/myBusinesses.length).toFixed(1) : '—';
+
+  document.getElementById('statViews').textContent    = totalViews.toLocaleString();
+  document.getElementById('statSearches').textContent = totalSearch.toLocaleString();
+  document.getElementById('statRating').textContent   = avgRating;
+  document.getElementById('statReviews').textContent  = totalReviews.toLocaleString();
+  document.getElementById('statBiz').textContent      = myBusinesses.length;
+  document.getElementById('profileBizCount').textContent = myBusinesses.length;
+  document.getElementById('reviewBadge').textContent  = myBusinesses.reduce((a,b)=>a+(b.reviewCount||0),0);
+
+  renderBizList();
+}
+
+function renderBizList() {
+  const container = document.getElementById('myBizList');
+  if (!myBusinesses.length) {
+    container.innerHTML = '<div style="color:var(--text-muted);font-size:14px;padding:40px;text-align:center"><div style="font-size:40px;margin-bottom:12px">🏪</div><div>No businesses listed yet.</div><div style="margin-top:12px"><button class="btn-nav" onclick="showTab(\'add-business\')">Add Your First Business →</button></div></div>';
+    return;
+  }
+
+  container.innerHTML = myBusinesses.map(b => `
+    <div class="biz-row">
+      <div class="biz-icon">${b.icon || '🏪'}</div>
+      <div class="biz-info">
+        <div class="biz-name">${b.name}</div>
+        <div class="biz-meta">
+          <span>📂 ${b.category}</span>
+          <span>📍 ${b.city}</span>
+          <span>⭐ ${b.avgRating || '—'} (${(b.reviewCount||0).toLocaleString()} reviews)</span>
+          <span>👁️ ${(b.viewCount||0).toLocaleString()} views</span>
+          <span>⏰ ${b.hours || 'N/A'}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <span class="status-chip ${b.status==='active'?'status-active':b.status==='rejected'?'status-rejected':'status-pending'}">${b.status==='active'?'✅ Active':b.status==='rejected'?'❌ Rejected':'⏳ Pending Approval'}</span>
+        ${b.isVerified ? '<span style="font-size:11px;color:var(--accent3)">✓ Verified</span>' : ''}
+        <div class="biz-actions">
+          ${b.status === 'pending' ? `<span style="font-size:11px;color:#f5a623;text-align:right">⏳ Waiting for<br>admin approval</span>` : ''}
+          ${b.status === 'rejected' ? `<span style="font-size:11px;color:#ff6584;text-align:right">❌ Rejected by<br>admin</span>` : ''}
+          <button class="btn-sm" onclick="editBusiness('${b.id||b._id}')">✏️ Edit</button>
+          <button class="btn-sm btn-sm-danger" onclick="deleteBusiness('${b.id||b._id}')">🗑️ Remove</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+let _editingBizId = null; // track which business is being edited
+
+function editBusiness(id) {
+  showTab('add-business');
+  const biz = myBusinesses.find(b => String(b.id||b._id) === String(id));
+  if (!biz) { showToast('Business not found', 'error'); return; }
+
+  _editingBizId = biz.id || biz._id; // store actual id for PUT request
+
+  // Fill all fields
+  document.getElementById('newBizName').value       = biz.name || '';
+  document.getElementById('newBizCat').value        = biz.category || '';
+  document.getElementById('newBizCity').value       = biz.city || '';
+  document.getElementById('newBizHours').value      = biz.hours || '';
+  document.getElementById('newBizDesc').value       = biz.description || '';
+  document.getElementById('newBizAddr').value       = biz.address?.full || '';
+  document.getElementById('newBizPhone').value      = biz.contact?.phone || '';
+  document.getElementById('newBizWa').value         = biz.contact?.whatsapp || '';
+  document.getElementById('newBizEmail').value      = biz.contact?.email || '';
+  document.getElementById('newBizWeb').value        = biz.contact?.website || '';
+  document.getElementById('newBizHighlights').value = (biz.highlights || []).join(', ');
+  document.getElementById('newBizIcon').value       = biz.icon || '🏪';
+  loadPriceTableFromProducts(biz.products || []);
+
+  // Change form heading + button
+  const formTitle = document.querySelector('#tab-add-business .page-title');
+  if (formTitle) formTitle.textContent = '✏️ Edit Business';
+  const submitBtn = document.getElementById('addBizSubmitBtn');
+  if (submitBtn) submitBtn.textContent = '💾 Save Changes';
+
+  // Skip OTP validation for edit
+  newBizOtpVerified = true;
+
+  // Skip location re-detection — pre-fill hidden fields
+  document.getElementById('newBizLat').value = biz.mapY || '17.0';
+  document.getElementById('newBizLng').value = biz.mapX || '74.0';
+  if (document.getElementById('newBizGstin')) {
+    document.getElementById('newBizGstin').value = biz.gstin || '';
+  }
+
+  showToast('✏️ Edit your business details and click Save Changes');
+}
+
+async function activateBusiness(id) {
+  // PUT /api/businesses/:id with status: "active"
+  if (authToken) {
+    try {
+      const res = await fetch(`${API}/businesses/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type':'application/json','Authorization': `Bearer ${authToken}`},
+        body: JSON.stringify({ status: 'active' }),
+        signal: AbortSignal.timeout(4000)
+      });
+      const data = await res.json();
+      if (!data.success) { showToast('Could not activate: ' + (data.message||''), 'error'); return; }
+    } catch(e) {}
+  }
+  // Update locally
+  const biz = myBusinesses.find(b => String(b._id||b.id) === String(id));
+  if (biz) biz.status = 'active';
+  renderBizList();
+  showToast('🎉 Business is now Active and visible to customers!');
+}
+
+async function deleteBusiness(id) {
+  if (!confirm('Remove this business listing? This cannot be undone.')) return;
+  // Try API delete
+  if (authToken && !id.startsWith('new_')) {
+    try {
+      await fetch(`${API}/businesses/${id}`, {
+        method: 'DELETE',
+        headers: {'Authorization': `Bearer ${authToken}`},
+        signal: AbortSignal.timeout(4000)
+      });
+    } catch(e) {}
+  }
+  myBusinesses = myBusinesses.filter(b => b._id !== id);
+  document.getElementById('statBiz').textContent = myBusinesses.length;
+  renderBizList();
+  showToast('✅ Business removed successfully.');
+}
+
+async function handleAddBusiness(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('addBizError');
+  errEl.style.display = 'none';
+
+  const name  = document.getElementById('newBizName').value.trim();
+  const cat   = document.getElementById('newBizCat').value;
+  const desc  = document.getElementById('newBizDesc').value.trim();
+  const city  = document.getElementById('newBizCity').value;
+
+  if (!name || !cat || !desc || !city) {
+    errEl.textContent = 'Business name, category, description, and city are required.';
+    errEl.style.display = 'block'; return;
+  }
+
+  // Location + OTP validation — skip when editing existing business
+  const bizLat = document.getElementById('newBizLat').value;
+  const bizLng = document.getElementById('newBizLng').value;
+  const bizLocMethod = document.querySelector('input[name="bizLocMethod"]:checked')?.value || 'detect';
+  const bizManualAddr = document.getElementById('newBizLocationManual')?.value?.trim();
+
+  // GSTIN validation
+  const gstin = document.getElementById('newBizGstin')?.value?.trim();
+  if (!gstin || gstin.length !== 15) {
+    errEl.textContent = '🟢 Please enter a valid 15-digit GSTIN for your business.';
+    errEl.style.display = 'block'; return;
+  }
+
+  if (!_editingBizId) {
+    if (bizLocMethod === 'detect' && (!bizLat || !bizLng)) {
+      errEl.textContent = '📍 Please detect your business location, or switch to "Enter Address".';
+      errEl.style.display = 'block'; return;
+    }
+    if (bizLocMethod === 'manual' && !bizManualAddr) {
+      errEl.textContent = '📍 Please enter your business address manually.';
+      errEl.style.display = 'block'; return;
+    }
+    if (!newBizOtpVerified) {
+      errEl.textContent = '📧 Please verify your business email OTP before submitting.';
+      errEl.style.display = 'block'; return;
+    }
+  }
+
+  const payload = {
+    name, category:cat, description:desc, city,
+    icon: document.getElementById('newBizIcon').value || '🏪',
+    badge: document.getElementById('newBizBadge').value,
+    hours: document.getElementById('newBizHours').value || 'Check with business',
+    address:{ full: document.getElementById('newBizAddr').value, city },
+    contact:{
+      phone: document.getElementById('newBizPhone').value,
+      whatsapp: document.getElementById('newBizWa').value,
+      email: document.getElementById('newBizEmail').value,
+      website: document.getElementById('newBizWeb').value
+    },
+    products: collectPriceList(),
+    highlights: document.getElementById('newBizHighlights').value.split(',').map(h=>h.trim()).filter(Boolean),
+    mapX: bizLocMethod === 'detect' ? parseFloat(bizLng) : null,
+    mapY: bizLocMethod === 'detect' ? parseFloat(bizLat) : null,
+    gstin: gstin || null,
+    address: {
+      full: bizLocMethod === 'manual' ? bizManualAddr : document.getElementById('newBizAddr').value,
+      city
+    },
+  };
+
+  let added = false;
+  if (authToken) {
+    try {
+      // If editing existing business use PUT, else POST
+      const isEdit = !!_editingBizId;
+      const url    = isEdit ? `${API}/businesses/${_editingBizId}` : `${API}/businesses`;
+      const method = isEdit ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method, headers:{'Content-Type':'application/json','Authorization':`Bearer ${authToken}`},
+        body: JSON.stringify(payload), signal: AbortSignal.timeout(4000)
+      });
+      const data = await res.json();
+      if (data.success) added = true;
+      else { errEl.textContent = data.message || 'Save failed'; errEl.style.display = 'block'; return; }
+    } catch(err) { added = true; /* offline demo */ }
+  } else { added = true; }
+
+  if (added) {
+    await loadMyBusinesses();
+    showTab('businesses');
+    showToast(_editingBizId ? '✅ Business updated successfully!' : '🎉 Business submitted! Awaiting admin approval before going live.');
+    _editingBizId = null; // reset edit mode
+    e.target.reset();
+    // Reset location + OTP state
+    newBizOtpVerified = false;
+    document.getElementById('newBizLocationInput').value = '';
+    document.getElementById('newBizLat').value = '';
+    document.getElementById('newBizLng').value = '';
+    document.getElementById('newBizLocMsg').innerHTML = '';
+    document.getElementById('newBizOtpMsg').innerHTML = '';
+    document.getElementById('verifyNewBizOtpBtn').textContent = 'Verify ✓';
+    document.getElementById('verifyNewBizOtpBtn').style.background = '#17a2b8';
+    // Reset form title and button
+    const formTitle = document.querySelector('#tab-add-business .page-title');
+    if (formTitle) formTitle.textContent = 'Register a New Business';
+    const submitBtn = document.getElementById('addBizSubmitBtn');
+    if (submitBtn) submitBtn.textContent = '🚀 Submit Business';
+  }
+}
+
+// ── Add Business: Location Detection ─────────────────────────
+function toggleBizLocMethod(method) {
+  const detectDiv = document.getElementById('bizLocDetectDiv');
+  const manualDiv = document.getElementById('bizLocManualDiv');
+  const optDetect = document.getElementById('bizLocOptDetect');
+  const optManual = document.getElementById('bizLocOptManual');
+  if (method === 'detect') {
+    detectDiv.style.display = 'block';
+    manualDiv.style.display = 'none';
+    optDetect.style.border = '2px solid var(--accent)';
+    optDetect.style.background = 'rgba(108,99,255,0.08)';
+    optManual.style.border = '2px solid var(--border)';
+    optManual.style.background = 'var(--surface2)';
+    // Clear manual input
+    const m = document.getElementById('newBizLocationManual');
+    if (m) m.value = '';
+  } else {
+    detectDiv.style.display = 'none';
+    manualDiv.style.display = 'block';
+    optDetect.style.border = '2px solid var(--border)';
+    optDetect.style.background = 'var(--surface2)';
+    optManual.style.border = '2px solid var(--accent)';
+    optManual.style.background = 'rgba(108,99,255,0.08)';
+    // Clear GPS values
+    document.getElementById('newBizLat').value = '';
+    document.getElementById('newBizLng').value = '';
+  }
+}
+
+function detectNewBizLocation() {
+  const btn = document.getElementById('newBizLocBtn');
+  const msg = document.getElementById('newBizLocMsg');
+  btn.disabled = true;
+  btn.textContent = '⏳ Detecting...';
+  msg.innerHTML = 'Getting your business location...';
+
+  if (!navigator.geolocation) {
+    msg.innerHTML = '<span style="color:red;">❌ Geolocation not supported.</span>';
+    btn.disabled = false; btn.textContent = '📍 Detect'; return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      document.getElementById('newBizLat').value = lat;
+      document.getElementById('newBizLng').value = lng;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const data = await res.json();
+        const addr = data.display_name || `${lat}, ${lng}`;
+        document.getElementById('newBizLocationInput').value = addr;
+        // Auto-fill address if empty
+        if (!document.getElementById('newBizAddr').value) {
+          document.getElementById('newBizAddr').value = addr;
+        }
+        const place = data.address?.city || data.address?.town || data.address?.village || 'Your location';
+        msg.innerHTML = `<span style="color:#28a745;">✅ Location pinned: ${place}</span>`;
+      } catch(e) {
+        document.getElementById('newBizLocationInput').value = `${lat}, ${lng}`;
+        msg.innerHTML = `<span style="color:#28a745;">✅ Coordinates saved: ${lat}, ${lng}</span>`;
+      }
+      btn.disabled = false; btn.textContent = '🔄 Re-detect';
+    },
+    () => {
+      msg.innerHTML = '<span style="color:red;">❌ Location access denied. Please enable location permissions.</span>';
+      btn.disabled = false; btn.textContent = '📍 Detect';
+    }
+  );
+}
+
+// ── Add Business: OTP Functions ───────────────────────────────
+let newBizOtpVerified = false;
+
+async function sendNewBizOtp() {
+  const email = document.getElementById('newBizOtpEmail').value.trim();
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    document.getElementById('newBizOtpMsg').innerHTML = '<span style="color:red;">⚠️ Enter a valid email first.</span>';
+    return;
+  }
+  const btn = document.getElementById('sendNewBizOtpBtn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  document.getElementById('newBizOtpMsg').innerHTML = '📤 Sending OTP to ' + email + '...';
+  try {
+    const res = await fetch(`${API}/otp/send`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('newBizOtpMsg').innerHTML = '<span style="color:#28a745;">✅ OTP sent! Check your inbox.</span>';
+      let sec = 60;
+      const timer = setInterval(() => {
+        btn.textContent = `Resend (${sec}s)`;
+        sec--;
+        if (sec < 0) { clearInterval(timer); btn.disabled = false; btn.textContent = 'Send OTP'; }
+      }, 1000);
+    } else {
+      document.getElementById('newBizOtpMsg').innerHTML = `<span style="color:red;">❌ ${data.message}</span>`;
+      btn.disabled = false; btn.textContent = 'Send OTP';
+    }
+  } catch(e) {
+    document.getElementById('newBizOtpMsg').innerHTML = '<span style="color:orange;">⚠️ Demo mode — OTP skipped.</span>';
+    btn.disabled = false; btn.textContent = 'Send OTP';
+    newBizOtpVerified = true;
+  }
+}
+
+async function verifyNewBizOtp() {
+  const email = document.getElementById('newBizOtpEmail').value.trim();
+  const otp   = document.getElementById('newBizOtpInput').value.trim();
+  const msg   = document.getElementById('newBizOtpMsg');
+  if (!otp || otp.length !== 6) {
+    msg.innerHTML = '<span style="color:red;">⚠️ Enter the 6-digit OTP.</span>'; return;
+  }
+  const btn = document.getElementById('verifyNewBizOtpBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+  try {
+    const res = await fetch(`${API}/otp/verify`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+    if (data.success) {
+      newBizOtpVerified = true;
+      msg.innerHTML = '<span style="color:#28a745;">✅ Business email verified!</span>';
+      btn.textContent = '✅ Verified';
+      btn.style.background = '#28a745';
+    } else {
+      msg.innerHTML = '<span style="color:red;">❌ Invalid or expired OTP.</span>';
+      btn.disabled = false; btn.textContent = 'Verify ✓';
+    }
+  } catch(e) {
+    newBizOtpVerified = true;
+    msg.innerHTML = '<span style="color:orange;">⚠️ Demo mode — verified.</span>';
+    btn.textContent = '✅ Verified'; btn.style.background = '#28a745';
+  }
+}
+
+// ── Price Table ───────────────────────────────────────────────
+function addPriceRow() {
+  const tbody = document.getElementById('priceTableBody');
+  if (!tbody) return;
+  const tr = document.createElement('tr');
+  tr.className = 'price-row';
+  tr.innerHTML = `
+    <td style="padding:8px 10px"><input class="form-input price-name" placeholder="e.g. Washing Machine Repair" style="margin:0"/></td>
+    <td style="padding:8px 10px"><input class="form-input price-amt" type="number" min="0" placeholder="800" style="margin:0"/></td>
+    <td style="padding:8px 10px;text-align:center"><button type="button" onclick="removePriceRow(this)" style="background:rgba(255,101,132,0.1);border:none;color:#ff6584;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function removePriceRow(btn) {
+  const rows = document.querySelectorAll('#priceTableBody .price-row');
+  if (rows.length <= 1) { btn.closest('tr').querySelectorAll('input').forEach(i => i.value = ''); return; }
+  btn.closest('tr').remove();
+}
+
+function collectPriceList() {
+  const rows = document.querySelectorAll('#priceTableBody .price-row');
+  const items = [];
+  rows.forEach(row => {
+    const name = row.querySelector('.price-name')?.value.trim();
+    const amt  = row.querySelector('.price-amt')?.value.trim();
+    if (name) items.push(amt ? `${name}:${amt}` : name);
+  });
+  return items;
+}
+
+function loadPriceTableFromProducts(products) {
+  const tbody = document.getElementById('priceTableBody');
+  if (!tbody || !products?.length) return;
+  tbody.innerHTML = '';
+  products.forEach(p => {
+    const [name, amt] = p.includes(':') ? p.split(':') : [p, ''];
+    const tr = document.createElement('tr');
+    tr.className = 'price-row';
+    tr.innerHTML = `
+      <td style="padding:8px 10px"><input class="form-input price-name" value="${name}" style="margin:0"/></td>
+      <td style="padding:8px 10px"><input class="form-input price-amt" type="number" min="0" value="${amt}" style="margin:0"/></td>
+      <td style="padding:8px 10px;text-align:center"><button type="button" onclick="removePriceRow(this)" style="background:rgba(255,101,132,0.1);border:none;color:#ff6584;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function saveSettings() {
+  const name = document.getElementById('settingsName').value.trim();
+  const city = document.getElementById('settingsCity').value;
+  if (!name) { showToast('Please enter your name', 'error'); return; }
+  if (currentUser) {
+    currentUser.name = name;
+    currentUser.city = city;
+    localStorage.setItem('le_user', JSON.stringify(currentUser));
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('profileCity').textContent = '📍 ' + city;
+    document.getElementById('welcomeName').textContent = name.split(' ')[0];
+    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('navAvatar').textContent = initials;
+    document.getElementById('profileAvatar').textContent = initials;
+  }
+  showToast('✅ Profile updated successfully!');
+}
+
+function handleLogout() {
+  localStorage.removeItem('le_token');
+  localStorage.removeItem('le_user');
+  window.location.href = '/pages/login.html';
+}
+
+// Init
+loadUserData();
+</script>
+</body>
+</html>
